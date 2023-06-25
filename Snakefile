@@ -1,3 +1,7 @@
+rule all:
+    input:
+        expand("/mnt/groupMansuy/kerem/tasks/longrna/exp/snakemake/01_FastQC_raw_data/{sample}/fastqc_result.html", sample=glob_wildcards("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz").sample)
+
 rule fastqc_raw_data:
     input:
         expand("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz", sample=glob_wildcards("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz").sample)
