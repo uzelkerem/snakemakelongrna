@@ -4,6 +4,6 @@ rule fastqc_raw_data:
     output:
         directory("/mnt/groupMansuy/kerem/tasks/longrna/exp/snakemake/01_FastQC_raw_data/{sample}")
     conda:
-        "envs/fastqc"
+        "envs/long01"
     shell:
         "bash 01_FastQC_raw_data.sh {input} {output}"
