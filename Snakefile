@@ -1,8 +1,8 @@
 rule fastqc_raw_data:
     input:
-        expand("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/{sample}.fastq.gz", sample=glob_wildcards("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/{sample}.fastq.gz").sample)
+        expand("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz", sample=glob_wildcards("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz").sample)
     output:
-        directory("/mnt/groupMansuy/kerem/tasks/longrna/exp/snakemake/01_FastQC_raw_data/{sample}")
+        directory("/mnt/groupMansuy/kerem/tasks/longrna/exp/snakemake/01_FastQC_raw_data/HSC_{sample}")
     conda:
         "envs/long01"
     shell:
