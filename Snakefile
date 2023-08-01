@@ -1,13 +1,14 @@
-rule all:
-    input:
-        expand("/mnt/groupMansuy/kerem/tasks/longrna/exp/snakemake/01_FastQC_raw_data/{sample}/fastqc_result.html", sample=glob_wildcards("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz").sample)
+configfile: "config.yaml"
 
 rule fastqc_raw_data:
     input:
-        expand("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz", sample=glob_wildcards("/mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC_{sample}.fastq.gz").sample)
+        "data/{sample}.fastq.gz"
     output:
-        directory("/mnt/groupMansuy/kerem/tasks/longrna/exp/snakemake/01_FastQC_raw_data")
+        "exp/preprocess_01/01_FastQC_raw_data"
+    log:
+        "logs/01_FastQC/{sample}.log"
     conda:
-        "long01"
+        "envs/long01.yaml"
+    threads: 4
     shell:
-        "bash 01_FastQC_raw_data.sh {input} {output}"
+        "(fastqc -t {threads} {input} > {output}) 2> {log}"

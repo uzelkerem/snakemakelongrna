@@ -1,0 +1,3 @@
+samples:
+    HSC1: /mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC1.fastq
+    HSC2: data/samples/B.fastq
