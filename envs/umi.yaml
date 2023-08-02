@@ -1,5 +1,8 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
 dependencies:
-  - umi-tools =1.1.4
+  - python
+  - pip
+  - pip:
+    - umi-tools==1.1.4
