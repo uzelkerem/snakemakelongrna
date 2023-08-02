@@ -2,7 +2,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - python
-  - pip
+  - python =3.11.4
+  - pip =23.2.1
   - pip:
     - umi-tools==1.1.4
