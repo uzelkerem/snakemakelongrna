@@ -1,3 +1,8 @@
 samples:
-    HSC1: /mnt/groupMansuy/kerem/tasks/longrna/rawdatas/HSC1.fastq
-    HSC2: data/samples/B.fastq
+  - HSC_1
+  - HSC_2
+  - HSC_3
+trimming_params:
+    quality: 30
+    length: 30
+    stringency: 2
