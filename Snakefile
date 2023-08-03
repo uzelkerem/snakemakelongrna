@@ -19,11 +19,9 @@ rule setup_directories:
         [f"{d}/.dir" for d in config['directories']]
     shell:
         """
-        {%- for d in config['directories'] %}
-        mkdir -p {d}
-        touch {d}/.dir
-        {%- endfor %}
-        """
+        {commands}
+        """.format(commands="\n".join(f"mkdir -p {d} && touch {d}/.dir" for d in config['directories']))
+
 
 rule fqc_raw_data_R1:
     input:
