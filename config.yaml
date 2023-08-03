@@ -2,10 +2,6 @@ samples:
   - HSC_1
   - HSC_2
   - HSC_3
-trimming_params:
-    quality: 30
-    length: 30
-    stringency: 2
 directories:
   - results/preprocess_01/01_FastQC_raw_data
   - results/preprocess_01/02_UMI_extraction
@@ -16,3 +12,7 @@ directories:
   - logs/02_UMI_extraction
   - logs/03_trimming
   - logs/04_FastQC_trimmed
+trimming_params:
+    quality: 30
+    length: 30
+    stringency: 2
