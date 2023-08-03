@@ -35,7 +35,7 @@ rule fqc_raw_data_R1:
     input:
         fastq="data/{sample}_R1.fastq.gz"
     output:
-        html="results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html"
+        html="results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
         zip="results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.zip"
     log:
         "logs/01_FastQC_rawdata/{sample}_R1.log"
@@ -49,7 +49,7 @@ rule fqc_raw_data_R2:
     input:
         fastq="data/{sample}_R2.fastq.gz"
     output:
-        html="results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.html"
+        html="results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.html",
         zip="results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
     log:
         "logs/01_FastQC_rawdata/{sample}_R2.log"
@@ -84,7 +84,7 @@ rule trimming:
     input:
         fastq="results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz"
     output:
-        trimmed="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz"
+        trimmed="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz",
         report="results/preprocess_01/03_trimmed_data/{sample}_R1_processed.fastq.gz_trimming_report.txt"
     params:
         quality=config["trimming_params"]["quality"],
@@ -109,7 +109,7 @@ rule fqc_trimmed_data:
     input:
         fastq="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz"
     output:
-        html="results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html"
+        html="results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
         zip="results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.zip"
     log:
         "logs/04_FastQC_trimmed/{sample}_R1_trimmed.log"
