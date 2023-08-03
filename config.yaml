@@ -6,3 +6,13 @@ trimming_params:
     quality: 30
     length: 30
     stringency: 2
+directories:
+  - results/preprocess_01/01_FastQC_raw_data
+  - results/preprocess_01/02_UMI_extraction
+  - results/preprocess_01/02_UMI_extraction/Read2s
+  - results/preprocess_01/03_trimmed_data
+  - results/preprocess_01/04_FastQC_trimmed_data
+  - logs/01_FastQC_rawdata
+  - logs/02_UMI_extraction
+  - logs/03_trimming
+  - logs/04_FastQC_trimmed

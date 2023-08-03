@@ -2,10 +2,10 @@ configfile: "config.yaml"
 
 rule all:
     input:
-        "results/preprocess_01/01_FastQC_raw_data/",
-        "results/preprocess_01/02_UMI_extraction/",
-        "results/preprocess_01/03_trimmed_data/",
-        "results/preprocess_01/04_FastQC_trimmed_data/",
+        "results/preprocess_01/01_FastQC_raw_data/.dir",
+        "results/preprocess_01/02_UMI_extraction/.dir",
+        "results/preprocess_01/03_trimmed_data/.dir",
+        "results/preprocess_01/04_FastQC_trimmed_data/.dir",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
@@ -14,21 +14,15 @@ rule all:
             sample=config["samples"]
         )
 
-
 rule setup_directories:
     output:
-        directory("results/preprocess_01/01_FastQC_raw_data/"),
-        directory("results/preprocess_01/02_UMI_extraction/"),
-        directory("results/preprocess_01/02_UMI_extraction/Read2s/"),
-        directory("results/preprocess_01/03_trimmed_data/"),
-        directory("results/preprocess_01/04_FastQC_trimmed_data/"),
-        directory("logs/01_FastQC_rawdata/"),
-        directory("logs/02_UMI_extraction/"),
-        directory("logs/03_trimming/"),
-        directory("logs/04_FastQC_trimmed/")
+        [f"{d}/.dir" for d in config['directories']]
     shell:
         """
-        mkdir -p {output}
+        {%- for d in config['directories'] %}
+        mkdir -p {d}
+        touch {d}/.dir
+        {%- endfor %}
         """
 
 rule fqc_raw_data_R1:
