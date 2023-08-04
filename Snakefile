@@ -127,8 +127,8 @@ rule sort_rRNAs_out:
         trimmed_fq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq",
         refs=expand("{ref}", ref=config["sortmerna_ref"])
     output:
-        aligned="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned",
-        other="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other"
+        aligned="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned.fq",
+        other="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"
     log:
         "logs/05_sortmerna/{sample}_sortmernaed.log"
     conda:
@@ -150,12 +150,14 @@ rule sort_rRNAs_out:
         sortmerna $ref_str \
         --workdir $working_dir \
         --reads {input.trimmed_fq} --threads {threads} \
-        --aligned {output.aligned} --other {output.other} --fastx > {log} 2>&1
+        --aligned results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_aligned \
+        --other results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_other \
+        --fastx > {log} 2>&1
         
         # Optionally clean up the temporary directories if needed
         rm -r $working_dir
         """
-
+        
 rule zip_sortmernaed:
     input:
         other_fq="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"
