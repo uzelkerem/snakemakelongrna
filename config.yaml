@@ -7,6 +7,7 @@ directories:
   - results/preprocess_01/02_UMI_extraction
   - results/preprocess_01/02_UMI_extraction/Read2s
   - results/preprocess_01/03_trimmed_data
+  - results/preprocess_01/03_trimmed_data/unzipped
   - results/preprocess_01/04_FastQC_trimmed_data
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
@@ -16,3 +17,12 @@ trimming_params:
     quality: 30
     length: 30
     stringency: 2
+sortmerna_ref:
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-euk-28s-id98.fasta
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-euk-18s-id95.fasta
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-arc-16s-id95.fasta
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-arc-23s-id98.fasta
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-bac-16s-id90.fasta
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-bac-23s-id98.fasta
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5.8s-database-id98.fasta
+  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5s-database-id98.fasta
