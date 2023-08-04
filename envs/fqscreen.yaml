@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python =3.5.6
+  - fastq-screen = 0.15.3
+  - bowtie2 = 2.3.4.3  

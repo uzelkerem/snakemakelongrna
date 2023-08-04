@@ -157,7 +157,7 @@ rule sort_rRNAs_out:
         # Optionally clean up the temporary directories if needed
         rm -r $working_dir
         """
-        
+
 rule zip_sortmernaed:
     input:
         other_fq="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"
@@ -165,3 +165,27 @@ rule zip_sortmernaed:
         fqgz="results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz"
     shell:
         "gzip -c {input.other_fq} > {output.fqgz}"  
+
+rule fqscreen_trimmed_data:
+    input:
+        trimmed_fq="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz",
+        sortmernaed_fq="results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz"
+    output:
+        trimmed_fqscreen_html="results/preprocess_01/06_FQScreen/from_trimmed_data/{sample}_R1_processed_trimmed_screen.html",
+        trimmed_fqscreen_txt="results/preprocess_01/06_FQScreen/from_trimmed_data/{sample}_R1_processed_trimmed_screen.txt",
+        sortmernaed_fqscreen_html="results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
+        sortmernaed_fqscreen_txt="results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.txt"        
+    log:
+        trimmed="logs/06_FQScreen/{sample}_R1_trimmed.log",
+        sortmernaed="logs/06_FQScreen/{sample}_R1_sortmernaed.log"
+    conda:
+        "envs/fqscreen.yaml"
+    threads: 4
+    shell:
+        """
+        fastq_screen --aligner bowtie2 --threads {threads} \
+        --outdir results/preprocess_01/06_FQScreen/from_trimmed_data {input.trimmed_fq} > {log.trimmed} 2>&1
+
+        fastq_screen --aligner bowtie2 --threads {threads} \
+        --outdir results/preprocess_01/06_FQScreen/from_sortmernaed_data {input.sortmernaed_fq} > {log.sortmernaed} 2>&1
+        """
