@@ -184,8 +184,10 @@ rule fqscreen_trimmed_data:
     shell:
         """
         fastq_screen --aligner bowtie2 --threads {threads} \
+        --conf {config[fastq_screen_conf]} \
         --outdir results/preprocess_01/06_FQScreen/from_trimmed_data {input.trimmed_fq} > {log.trimmed} 2>&1
 
         fastq_screen --aligner bowtie2 --threads {threads} \
+        --conf {config[fastq_screen_conf]} \
         --outdir results/preprocess_01/06_FQScreen/from_sortmernaed_data {input.sortmernaed_fq} > {log.sortmernaed} 2>&1
         """

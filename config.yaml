@@ -31,3 +31,4 @@ sortmerna_ref:
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-bac-23s-id98.fasta
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5.8s-database-id98.fasta
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5s-database-id98.fasta
+fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/conf/fastq_screen.conf"
