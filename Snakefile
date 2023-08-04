@@ -100,7 +100,7 @@ rule trimming:
 
 rule fqc_trimmed_data:
     input:
-        fastq="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz"
+        trimmed_fq="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz"
     output:
         html="results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
         zip="results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.zip"
@@ -110,4 +110,46 @@ rule fqc_trimmed_data:
         "envs/fastq.yaml"
     threads: 4
     shell:
-        "fastqc -t {threads} -o results/preprocess_01/04_FastQC_trimmed_data/ {input.fastq} > {log} 2>&1"
+        "fastqc -t {threads} -o results/preprocess_01/04_FastQC_trimmed_data/ {input.trimmed_fq} > {log} 2>&1"
+
+rule unzip_trimmed:
+    input:
+        trimmed_fq="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz"
+    output:
+        fastq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq"
+    shell:
+        "gunzip -c {input.trimmed_fq} > {output.fastq}"
+
+rule sort_rRNAs_out:
+    input:
+        trimmed_fq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq"
+        refs=expand("{ref}", ref=config["sortmerna_ref"])
+    output:
+        aligned="results/preprocess_01/05_sortmernaed_data/{sample}.aligned",
+        other="results/preprocess_01/05_sortmernaed_data/{sample}.other"
+    log:
+        "logs/05_sortmerna/{sample}_sortmernaed.log"
+    conda:
+        "envs/sortrna.yaml"
+    threads: 8
+    shell:
+        """
+        # Create directories if they don't exist
+        working_dir="results/preprocess_01/05_sortmernaed_data/tempdir{sample}"
+        mkdir -p $working_dir
+        
+        # Set up the sortmerna command
+        ref_str=""
+        for ref in {input.refs}; do
+            ref_str="$ref_str --ref $ref"
+        done
+        
+        # Run sortmerna
+        sortmerna $ref_str \
+        --workdir $working_dir \
+        --reads {input.trimmed_fq} --threads {threads} \
+        --aligned {output.aligned} --other {output.other} --fastx > {log} 2>&1
+        
+        # Optionally clean up the temporary directories if needed
+        rm -r $working_dir
+        """
