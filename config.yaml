@@ -10,6 +10,7 @@ directories:
   - results/preprocess_01/03_trimmed_data/unzipped
   - results/preprocess_01/04_FastQC_trimmed_data
   - results/preprocess_01/05_sortmernaed_data
+  - results/preprocess_01/05_sortmernaed_data/zipped
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming

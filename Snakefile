@@ -10,7 +10,7 @@ rule all:
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
-                "results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq",
+                "results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -155,3 +155,11 @@ rule sort_rRNAs_out:
         # Optionally clean up the temporary directories if needed
         rm -r $working_dir
         """
+
+rule zip_sortmernaed:
+    input:
+        other_fq="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"
+    output:
+        fqgz="results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz"
+    shell:
+        "gzip -c {input.other_fq} > {output.fqgz}"  
