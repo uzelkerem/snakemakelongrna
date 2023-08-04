@@ -11,11 +11,13 @@ directories:
   - results/preprocess_01/04_FastQC_trimmed_data
   - results/preprocess_01/05_sortmernaed_data
   - results/preprocess_01/05_sortmernaed_data/zipped
+  - results/preprocess_01/06_FQScreen
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming
   - logs/04_FastQC_trimmed
   - logs/05_sortmerna
+  - logs/06_FQScreen
 trimming_params:
     quality: 30
     length: 30
