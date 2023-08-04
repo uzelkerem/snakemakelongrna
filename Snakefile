@@ -137,7 +137,7 @@ rule sort_rRNAs_out:
     shell:
         """
         # Create directories if they don't exist
-        working_dir="results/preprocess_01/05_sortmernaed_data/tempdir{sample}"
+        working_dir="results/preprocess_01/05_sortmernaed_data/tempdir{wildcards.sample}"
         mkdir -p $working_dir
         
         # Set up the sortmerna command
