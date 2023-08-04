@@ -9,10 +9,12 @@ directories:
   - results/preprocess_01/03_trimmed_data
   - results/preprocess_01/03_trimmed_data/unzipped
   - results/preprocess_01/04_FastQC_trimmed_data
+  - results/preprocess_01/05_sortmernaed_data
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming
   - logs/04_FastQC_trimmed
+  - logs/05_sortmerna
 trimming_params:
     quality: 30
     length: 30

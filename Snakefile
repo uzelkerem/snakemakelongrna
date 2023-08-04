@@ -6,9 +6,11 @@ rule all:
         "results/preprocess_01/02_UMI_extraction/.dir",
         "results/preprocess_01/03_trimmed_data/.dir",
         "results/preprocess_01/04_FastQC_trimmed_data/.dir",
+        "results/preprocess_01/05_sortmernaed_data/.dir",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
+                "results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -125,8 +127,8 @@ rule sort_rRNAs_out:
         trimmed_fq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq",
         refs=expand("{ref}", ref=config["sortmerna_ref"])
     output:
-        aligned="results/preprocess_01/05_sortmernaed_data/{sample}.aligned",
-        other="results/preprocess_01/05_sortmernaed_data/{sample}.other"
+        aligned="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned.fq",
+        other="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"
     log:
         "logs/05_sortmerna/{sample}_sortmernaed.log"
     conda:
