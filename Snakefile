@@ -127,8 +127,8 @@ rule sort_rRNAs_out:
         trimmed_fq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq",
         refs=expand("{ref}", ref=config["sortmerna_ref"])
     output:
-        aligned="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned.fq",
-        other="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"
+        aligned="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned",
+        other="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other"
     log:
         "logs/05_sortmerna/{sample}_sortmernaed.log"
     conda:
