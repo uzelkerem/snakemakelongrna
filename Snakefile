@@ -122,7 +122,7 @@ rule unzip_trimmed:
 
 rule sort_rRNAs_out:
     input:
-        trimmed_fq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq"
+        trimmed_fq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq",
         refs=expand("{ref}", ref=config["sortmerna_ref"])
     output:
         aligned="results/preprocess_01/05_sortmernaed_data/{sample}.aligned",
