@@ -9,11 +9,12 @@ rule all:
         "results/preprocess_01/05_sortmernaed_data/.dir",
         "results/preprocess_01/06_FQScreen/.dir",
         "results/preprocess_01/07_star_aligned/.dir",
+        "results/preprocess_01/08_umi_deduplicated/.dir",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
                 "results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
-                "results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam",
+                "results/preprocess_01/08_umideduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -224,4 +225,25 @@ rule star_aligner:
         samtools index {output.bam}
         samtools idxstats {output.bam} > {output.idxstat} 
         samtools flagstat {output.bam} > {output.flagstat}
+        """
+
+rule umi_deduplication:
+    input:
+        bam="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam"
+    output:
+        dedup_bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
+    log:
+        "logs/08_UMI_deduplication/{sample}_deduplication_log.txt"
+    conda:
+        "envs/umi.yaml"
+    shell:
+        """
+        # Deduplicate BAM file using umi_tools dedup
+        umi_tools dedup \
+        --stdin={input.bam} \
+        --log={log} \
+        --stdout {output.dedup_bam} --buffer-whole-contig
+
+        # Generate index for the deduplicated BAM file
+        samtools index {output.dedup_bam}
         """

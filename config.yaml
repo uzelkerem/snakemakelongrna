@@ -13,6 +13,7 @@ directories:
   - results/preprocess_01/05_sortmernaed_data/zipped
   - results/preprocess_01/06_FQScreen
   - results/preprocess_01/07_star_aligned
+  - results/preprocess_01/08_umi_deduplicated
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming
@@ -20,6 +21,7 @@ directories:
   - logs/05_sortmerna
   - logs/06_FQScreen
   - logs/07_staraligner
+  - logs/08_UMI_deduplication
 trimming_params:
     quality: 30
     length: 30
