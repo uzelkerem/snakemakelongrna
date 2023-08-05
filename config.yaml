@@ -12,12 +12,14 @@ directories:
   - results/preprocess_01/05_sortmernaed_data
   - results/preprocess_01/05_sortmernaed_data/zipped
   - results/preprocess_01/06_FQScreen
+  - results/preprocess_01/07_star_aligned
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming
   - logs/04_FastQC_trimmed
   - logs/05_sortmerna
   - logs/06_FQScreen
+  - logs/07_staraligner
 trimming_params:
     quality: 30
     length: 30
@@ -32,3 +34,5 @@ sortmerna_ref:
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5.8s-database-id98.fasta
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5s-database-id98.fasta
 fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/conf/fastq_screen.conf"
+star_genome_dir: "/mnt/groupMansuy/kerem/tasks/longrna/genome/staridx"
+star_GTF_file: "/mnt/groupMansuy/kerem/tasks/longrna/genome/GCF_000001635.27_GRCm39_genomic.gtf"

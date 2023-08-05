@@ -7,10 +7,13 @@ rule all:
         "results/preprocess_01/03_trimmed_data/.dir",
         "results/preprocess_01/04_FastQC_trimmed_data/.dir",
         "results/preprocess_01/05_sortmernaed_data/.dir",
+        "results/preprocess_01/06_FQScreen/.dir",
+        "results/preprocess_01/07_star_aligned/.dir",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
                 "results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
+                "results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -190,4 +193,37 @@ rule fqscreen_trimmed_data:
         fastq_screen --aligner bowtie2 --threads {threads} \
         --conf {config[fastq_screen_conf]} \
         --outdir results/preprocess_01/06_FQScreen/from_sortmernaed_data {input.sortmernaed_fq} > {log.sortmernaed} 2>&1
+        """
+
+rule star_aligner:
+    input:
+        fastq="results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz",
+    output:
+        bam="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam"
+        idx="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam.bai"
+        idxstat="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.idxstats"
+        flagstat="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.flagstat"
+    log:
+        star="logs/07_staraligner/{sample}_staralign.log",
+        index="logs/07_staraligner/{sample}_index.log",
+        idxstat="logs/07_staraligner/{sample}_idxstat.log",
+        flagstat="logs/07_staraligner/{sample}_flagstat.log"
+    conda:
+        "envs/star.yaml"
+    threads: 8
+    shell:
+        """
+        STAR \
+            --runThreadN {threads} \
+            --genomeDir {config[star_genome_dir]} \
+            --sjdbGTFfile {config[star_GTF_file]} \
+            --readFilesCommand zcat \
+            --readFilesIn {input.fastq} \
+         --outFileNamePrefix results/preprocess_01/07_star_aligned/{wildcards.sample}_R1_processed_trimmed_other_ \
+         --outSAMtype BAM SortedByCoordinate > {log.star} 2>&1
+
+        # Generate index for the output BAM file
+        samtools index {output.bam} > {log.index} 2>&1
+        samtools idxstats {output.bam} > {output.idxstat} > {log.idxstat} 2>&1
+        samtools flagstat {output.bam} > {output.flagstat} > {log.flagstat} 2>&1
         """
