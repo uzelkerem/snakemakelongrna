@@ -206,8 +206,6 @@ rule star_aligner:
     log:
         star="logs/07_staraligner/{sample}_staralign.log",
         index="logs/07_staraligner/{sample}_index.log",
-        idxstat="logs/07_staraligner/{sample}_idxstat.log",
-        flagstat="logs/07_staraligner/{sample}_flagstat.log"
     conda:
         "envs/star.yaml"
     threads: 8
@@ -223,7 +221,7 @@ rule star_aligner:
          --outSAMtype BAM SortedByCoordinate > {log.star} 2>&1
 
         # Generate index for the output BAM file
-        samtools index {output.bam} > {log.index} 2>&1
-        samtools idxstats {output.bam} > {output.idxstat} > {log.idxstat} 2>&1
-        samtools flagstat {output.bam} > {output.flagstat} > {log.flagstat} 2>&1
+        samtools index {output.bam}
+        samtools idxstats {output.bam} > {output.idxstat} 
+        samtools flagstat {output.bam} > {output.flagstat}
         """
