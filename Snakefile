@@ -14,7 +14,7 @@ rule all:
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
                 "results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
-                "results/preprocess_01/08_umideduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam",
+                "results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
