@@ -312,7 +312,7 @@ rule calculate_tin:
 
 rule merge_tin:
     input:
-        expand("results/preprocess_01/16_02_TinScore/Fig2_results_{sample}.tsv", sample=config["samples"])
+        expand("results/preprocess_01/11_TinScore/{sample}.tsv", sample=config["samples"])
     output:
         "results/preprocess_01/11_TinScore/merged.tsv"
     conda:
