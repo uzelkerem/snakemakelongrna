@@ -13,6 +13,7 @@ rule all:
         "results/preprocess_01/09_picard_markdup/.dir",
         "results/preprocess_01/10_featureCounts/.dir",
         "results/preprocess_01/11_TinScore/.dir",
+        "results/preprocess_01/12_GeneBodyCov/.dir",
         "results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt",
         "results/preprocess_01/11_TinScore/merged.tsv",
         expand(
@@ -20,6 +21,7 @@ rule all:
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
                 "results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
                 "results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
+                "results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -320,3 +322,15 @@ rule merge_tin:
         """
         merge-tin.py --input-files {input} --output-file {output}
         """
+
+rule calculate_genebodycoverage:
+    input:
+        bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
+    output:
+        pdf="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.curves.pdf",
+        r="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.r",
+        txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt"
+    conda:
+        "envs/rseqc.yaml"
+    shell:
+        "geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o {wildcards.sample}"
