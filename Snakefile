@@ -10,11 +10,12 @@ rule all:
         "results/preprocess_01/06_FQScreen/.dir",
         "results/preprocess_01/07_star_aligned/.dir",
         "results/preprocess_01/08_umi_deduplicated/.dir",
+        "results/preprocess_01/09_picard_markdup/.dir",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
                 "results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
-                "results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam",
+                "results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -254,7 +255,7 @@ rule picard_markduplicates:
         afterumi_bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
     output:
         beforeumi_metrics="results/preprocess_01/09_picard_markdup/beforeumidedup/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out_marked_duplicates_metrics.txt",
-        afterumi_metrics="results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
+        afterumi_metrics="results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt"
     log:
         beforeumi="logs/09_picard_markdup/{sample}_beforeumi_markdup_log.txt",
         afterumi="logs/09_picard_markdup/{sample}_afterumi_markdup_log.txt"
