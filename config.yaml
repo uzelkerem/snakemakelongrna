@@ -15,6 +15,7 @@ directories:
   - results/preprocess_01/07_star_aligned
   - results/preprocess_01/08_umi_deduplicated
   - results/preprocess_01/09_picard_markdup
+  - results/preprocess_01/10_featureCounts
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming
@@ -24,6 +25,7 @@ directories:
   - logs/07_staraligner
   - logs/08_UMI_deduplication
   - logs/09_picard_markdup
+  - logs/10_featureCounts
 trimming_params:
     quality: 30
     length: 30
@@ -39,4 +41,4 @@ sortmerna_ref:
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5s-database-id98.fasta
 fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/auxiliary/conf/fastq_screen.conf"
 star_genome_dir: "/mnt/groupMansuy/kerem/auxiliary/genome/staridx"
-star_GTF_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GCF_000001635.27_GRCm39_genomic.gtf"
+GTF_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GCF_000001635.27_GRCm39_genomic.gtf"
