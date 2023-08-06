@@ -306,7 +306,7 @@ rule calculate_tin:
         "envs/rseqc.yaml"
     threads: 8
     shell:
-        "calculate-tin.py -r {config[bed_file]} -i "{input.bam}" --names={wildcards.sample} -p {threads} 1> "{output.tsv}" > {log} 2>&1"
+        "calculate-tin.py -r {config[bed_file]} -i {input.bam} --names={wildcards.sample} -p {threads} 1> {output.tsv} > {log} 2>&1"
 
 rule merge_tin:
     input:
