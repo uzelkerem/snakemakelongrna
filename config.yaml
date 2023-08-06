@@ -27,7 +27,6 @@ directories:
   - logs/08_UMI_deduplication
   - logs/09_picard_markdup
   - logs/10_featureCounts
-  - logs/11_TinScore
 trimming_params:
     quality: 30
     length: 30
