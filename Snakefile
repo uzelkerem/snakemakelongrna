@@ -11,6 +11,8 @@ rule all:
         "results/preprocess_01/07_star_aligned/.dir",
         "results/preprocess_01/08_umi_deduplicated/.dir",
         "results/preprocess_01/09_picard_markdup/.dir",
+        "results/preprocess_01/10_featureCounts/.dir",
+        "results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
@@ -216,7 +218,7 @@ rule star_aligner:
         STAR \
             --runThreadN {threads} \
             --genomeDir {config[star_genome_dir]} \
-            --sjdbGTFfile {config[star_GTF_file]} \
+            --sjdbGTFfile {config[GTF_file]} \
             --readFilesCommand zcat \
             --readFilesIn {input.fastq} \
          --outFileNamePrefix results/preprocess_01/07_star_aligned/{wildcards.sample}_R1_processed_trimmed_other_ \
@@ -274,4 +276,20 @@ rule picard_markduplicates:
         O="/dev/null" \
         M={output.afterumi_metrics} \
         > {log.afterumi} 2>&1
+        """
+
+rule feature_counts:
+    input:
+        bams=expand("results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam", sample=config["samples"])
+    output:
+        counts="results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt"
+    log:
+        "logs/10_featureCounts/fig2_counts_gtfD_s02.log"
+    conda:
+        "envs/featurecounts.yaml"
+    threads: 8
+    shell:
+        """
+        featureCounts -T {threads} -s 2 -t exon -g gene_id -a {config[GTF_file]} \
+        -o {output.counts} {input.bams} > {log} 2>&1
         """
