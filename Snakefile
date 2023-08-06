@@ -282,7 +282,8 @@ rule feature_counts:
     input:
         bams=expand("results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam", sample=config["samples"])
     output:
-        counts="results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt"
+        counts="results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt",
+        summary="results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt.summary"
     log:
         "logs/10_featureCounts/fig2_counts_gtfD_s02.log"
     conda:
