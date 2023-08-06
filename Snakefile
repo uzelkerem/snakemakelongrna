@@ -14,7 +14,7 @@ rule all:
         "results/preprocess_01/10_featureCounts/.dir",
         "results/preprocess_01/11_TinScore/.dir",
         "results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt",
-        "results/preprocess_01/16_02_TinScore/merged.tsv",
+        "results/preprocess_01/11_TinScore/merged.tsv",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
