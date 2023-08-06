@@ -333,4 +333,4 @@ rule calculate_genebodycoverage:
     conda:
         "envs/rseqc.yaml"
     shell:
-        "geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o {wildcards.sample}"
+        "geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}"
