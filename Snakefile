@@ -302,14 +302,12 @@ rule calculate_tin:
         bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
     output:
         tsv="results/preprocess_01/11_TinScore/{sample}.tsv"
-    log:
-        "logs/11_TinScore/{sample}_tin_calculation.log"
     conda:
         "envs/rseqc.yaml"
     threads: 8
 
     shell:
-        "calculate-tin.py -r {config[bed_file]} -i {input.bam} --names={wildcards.sample} -p {threads} 1> {output.tsv} > {log} 2>&1"
+        "calculate-tin.py -r {config[bed_file]} -i {input.bam} --names={wildcards.sample} -p {threads} 1> {output.tsv}"
 
 rule merge_tin:
     input:
