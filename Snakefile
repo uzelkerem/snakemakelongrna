@@ -294,3 +294,28 @@ rule feature_counts:
         featureCounts -T {threads} -s 2 -t exon -g gene_id -a {config[GTF_file]} \
         -o {output.counts} {input.bams} > {log} 2>&1
         """
+
+rule calculate_tin:
+    input:
+        bam="results/preprocess_01/09_02_umidedup_alig_star_sortmerna/{sample}_R1_processed_trimmed.other_Aligned.sortedByCoord.out.bam_dedup.bam"
+    output:
+        tsv="results/preprocess_01/11_TinScore/{sample}.tsv"
+    log:
+        "logs/11_TinScore/{sample}_tin_calculation.log"
+    conda:
+        "envs/rseqc.yaml"
+    threads: 8
+    shell:
+        "calculate-tin.py -r {config[bed_file]} -i "{input.bam}" --names={wildcards.sample} -p {threads} 1> "{output.tsv}" > {log} 2>&1"
+
+rule merge_tin:
+    input:
+        expand("results/preprocess_01/16_02_TinScore/Fig2_results_{sample}.tsv", sample=config["samples"])
+    output:
+        "results/preprocess_01/16_02_TinScore/merged.tsv"
+    conda:
+        "envs/rseqc.yaml"
+    shell:
+        """
+        merge-tin.py --input-files {input} --output-file {output}
+        """
