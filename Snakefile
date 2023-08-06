@@ -12,7 +12,9 @@ rule all:
         "results/preprocess_01/08_umi_deduplicated/.dir",
         "results/preprocess_01/09_picard_markdup/.dir",
         "results/preprocess_01/10_featureCounts/.dir",
+        "results/preprocess_01/11_TinScore/.dir",
         "results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt",
+        "results/preprocess_01/16_02_TinScore/merged.tsv",
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
@@ -312,7 +314,7 @@ rule merge_tin:
     input:
         expand("results/preprocess_01/16_02_TinScore/Fig2_results_{sample}.tsv", sample=config["samples"])
     output:
-        "results/preprocess_01/16_02_TinScore/merged.tsv"
+        "results/preprocess_01/11_TinScore/merged.tsv"
     conda:
         "envs/rseqc.yaml"
     shell:

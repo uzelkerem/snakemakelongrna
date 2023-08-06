@@ -16,6 +16,7 @@ directories:
   - results/preprocess_01/08_umi_deduplicated
   - results/preprocess_01/09_picard_markdup
   - results/preprocess_01/10_featureCounts
+  - results/preprocess_01/11_TinScore
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming
@@ -26,6 +27,7 @@ directories:
   - logs/08_UMI_deduplication
   - logs/09_picard_markdup
   - logs/10_featureCounts
+  - logs/11_TinScore
 trimming_params:
     quality: 30
     length: 30
