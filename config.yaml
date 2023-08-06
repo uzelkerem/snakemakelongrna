@@ -2,6 +2,20 @@ samples:
   - HSC_1
   - HSC_2
   - HSC_3
+  - HSC_4
+  - HSC_5
+  - HSC_6
+  - HSC_7
+  - HSC_8
+  - HSC_11
+  - HSC_12
+  - HSC_13
+  - HSC_14
+  - HSC_15
+  - HSC_19
+  - HSC_20
+  - HSC_21
+  - HSC_24
 directories:
   - results/preprocess_01/01_FastQC_raw_data
   - results/preprocess_01/02_UMI_extraction
