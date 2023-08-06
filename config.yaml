@@ -35,6 +35,6 @@ sortmerna_ref:
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-bac-23s-id98.fasta
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5.8s-database-id98.fasta
   - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5s-database-id98.fasta
-fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/conf/fastq_screen.conf"
-star_genome_dir: "/mnt/groupMansuy/kerem/tasks/longrna/genome/staridx"
-star_GTF_file: "/mnt/groupMansuy/kerem/tasks/longrna/genome/GCF_000001635.27_GRCm39_genomic.gtf"
+fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/auxiliary/conf/fastq_screen.conf"
+star_genome_dir: "/mnt/groupMansuy/kerem/auxiliary/genome/staridx"
+star_GTF_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GCF_000001635.27_GRCm39_genomic.gtf"
