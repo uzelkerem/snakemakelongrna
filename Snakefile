@@ -247,3 +247,30 @@ rule umi_deduplication:
         # Generate index for the deduplicated BAM file
         samtools index {output.dedup_bam}
         """
+
+rule picard_markduplicates:
+    input:
+        beforeumi_bam="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam",
+        afterumi_bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
+    output:
+        beforeumi_metrics="results/preprocess_01/09_picard_markdup/beforeumidedup/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out_marked_duplicates_metrics.txt",
+        afterumi_metrics="results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
+    log:
+        beforeumi="logs/09_picard_markdup/{sample}_beforeumi_markdup_log.txt",
+        afterumi="logs/09_picard_markdup/{sample}_afterumi_markdup_log.txt"
+    conda:
+        "envs/picard.yaml"
+    shell:
+        """
+        picard MarkDuplicates \
+        I={input.beforeumi_bam} \
+        O="/dev/null" \
+        M={output.beforeumi_metrics} \
+        > {log.beforeumi} 2>&1
+
+        picard MarkDuplicates \
+        I={input.afterumi_bam} \
+        O="/dev/null" \
+        M={output.afterumi_metrics} \
+        > {log.afterumi} 2>&1
+        """
