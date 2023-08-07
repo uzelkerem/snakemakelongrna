@@ -129,7 +129,7 @@ rule unzip_trimmed:
     input:
         trimmed_fq="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz"
     output:
-        fastq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq"
+        fastq=temp("results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq")
     shell:
         "gunzip -c {input.trimmed_fq} > {output.fastq}"
 
@@ -161,7 +161,6 @@ rule sort_rRNAs_out:
         sortmerna $ref_str \
         --workdir $working_dir \
         --reads {input.trimmed_fq} --threads {threads} \
-        --aligned results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_aligned \
         --other results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_other \
         --fastx > {log} 2>&1
         
