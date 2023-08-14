@@ -367,11 +367,15 @@ rule calculate_tin:
     conda:
         "envs/rseqc.yaml"
     threads: 8
-    run:
-        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
-        shell(
-            "calculate-tin.py -r {config[bed_file]} -i {input.bam} --names={wildcards.sample} -p {threads} 1> {output.tsv}"
-        )
+    shell:
+        """
+        if [ "{config[run_rseqc]}" = "True" ]; then
+            calculate-tin.py -r {config[bed_file]} -i {input.bam} --names={wildcards.sample} -p {threads} 1> {output.tsv}
+        else
+            echo "RSeQC analysis is turned off in the config."
+            exit 1
+        fi
+        """
 
 rule merge_tin:
     input:
@@ -380,11 +384,15 @@ rule merge_tin:
         "results/preprocess_01/11_TinScore/merged.tsv"
     conda:
         "envs/rseqc.yaml"
-    run:
-        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
-        shell(
-            "merge-tin.py --input-files {input} --output-file {output}"
-        )
+    shell:
+        """
+        if [ "{config[run_rseqc]}" = "True" ]; then
+            merge-tin.py --input-files {input} --output-file {output}
+        else
+            echo "RSeQC analysis is turned off in the config."
+            exit 1
+        fi
+        """
 
 rule calculate_genebodycoverage:
     input:
@@ -395,11 +403,15 @@ rule calculate_genebodycoverage:
         txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt"
     conda:
         "envs/rseqc.yaml"
-    run:
-        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
-        shell(
-            "geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}"
-        )
+    shell:
+        """
+        if [ "{config[run_rseqc]}" = "True" ]; then
+            geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}
+        else
+            echo "RSeQC analysis is turned off in the config."
+            exit 1
+        fi
+        """
 
 rule multiqc:
     input:
@@ -425,8 +437,12 @@ rule plot_tin_scores:
         "envs/r_ggplot2.yaml" 
     script:
         "scripts/plot_tin_scores.R"
-    run:
-        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
-        shell(
-            "Rscript {script} {input} {output}"
-        )
+    shell:
+        """
+        if [ "{config[run_rseqc]}" = "True" ]; then
+            Rscript {script} {input} {output}
+        else
+            echo "RSeQC analysis is turned off in the config."
+            exit 1
+        fi
+        """
