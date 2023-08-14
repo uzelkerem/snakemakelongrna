@@ -100,20 +100,20 @@ rule umiextraction_check:
         r2_original_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R2.fastq",
         r1_umi_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/umiextracted_{sample}_R1.fastq",
         r2_umi_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/umiextracted_{sample}_R2.fastq"
-    params:
-        n_lines = 100
-    run:
+    shell:
+        """
         # original R1
-        shell("zcat {input.r1_original} | awk 'NR <= 100' > {output.r1_original_checked}")
+        zcat {input.r1_original} | awk 'NR <= 100' > {output.r1_original_checked}
 
         # original R2
-        shell("zcat {input.r2_original} | awk 'NR <= 100' > {output.r2_original_checked}")
+        zcat {input.r2_original} | awk 'NR <= 100' > {output.r2_original_checked}
 
         # UMI extracted R1
-        shell("zcat {input.r1_umi} | awk 'NR <= 100' > {output.r1_umi_checked}")
+        zcat {input.r1_umi} | awk 'NR <= 100' > {output.r1_umi_checked}
 
         # UMI extracted R2
-        shell("zcat {input.r2_umi} | awk 'NR <= 100' > {output.r2_umi_checked}")
+        zcat {input.r2_umi} | awk 'NR <= 100' > {output.r2_umi_checked}
+        """
 
 rule trimming:
     input:
