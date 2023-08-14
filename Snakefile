@@ -285,10 +285,10 @@ rule feature_counts:
     input:
         bams=expand("results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam", sample=config["samples"])
     output:
-        counts="results/preprocess_01/10_featureCounts/{prefix_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
+        counts="results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
         summary="results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt.summary".format(prefix=config['prefix'])
     log:
-        "logs/10_featureCounts/{prefix_counts_gtfD_s02_sortmerna.log".format(prefix=config['prefix'])
+        "logs/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.log".format(prefix=config['prefix'])
     conda:
         "envs/featurecounts.yaml"
     threads: 8
