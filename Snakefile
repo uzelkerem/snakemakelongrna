@@ -384,8 +384,7 @@ rule calculate_genebodycoverage:
 
 rule multiqc:
     input:
-        trigger="results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
-        data=lambda wildcards: expand("results/preprocess_01/{analysis}", analysis=wildcards.analysis)
+        directories=expand("results/preprocess_01/{analysis}/.dir", analysis=config["ANALYSIS_DIRS"])
     output:
         html="results/qc_plots_02/{analysis}/multiqc_report.html"
     params:
@@ -395,7 +394,7 @@ rule multiqc:
         "envs/multiqc.yaml"
     shell:
         """
-        multiqc -c {params.configfile} -o {params.outdir} {input.data} -p -s -d
+        multiqc -c {params.configfile} -o {params.outdir} results/preprocess_01/{wildcards.analysis} -p -s -d
         """
 
 rule plot_tin_scores:
