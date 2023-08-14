@@ -33,7 +33,7 @@ directories:
   - results/preprocess_01/10_featureCounts
   - results/preprocess_01/11_TinScore
   - results/preprocess_01/12_GeneBodyCov
-  - results/qc_plots_02/02_UMI_extraction
+  - results/qc_plots_02/02_UMI_extraction/seq_check
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming
