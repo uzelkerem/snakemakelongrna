@@ -4,6 +4,7 @@ rule all:
     input:
         "results/preprocess_01/01_FastQC_raw_data/.dir",
         "results/preprocess_01/02_UMI_extraction/.dir",
+        expand("some_outputfolder/original_{sample}_R1.fastq", sample=config["samples"][:2]),
         "results/preprocess_01/03_trimmed_data/.dir",
         "results/preprocess_01/04_FastQC_trimmed_data/.dir",
         "results/preprocess_01/05_sortmernaed_data/.dir",
@@ -73,7 +74,7 @@ rule umi_extraction:
         r2="data/{sample}_R2.fastq.gz"
     output:
         out_r1="results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz",
-        out_r2="results/preprocess_01/02_UMI_extraction/Read2s/{sample}_R2_processed.fastq.gz"
+        out_r2=temp("results/preprocess_01/02_UMI_extraction/Read2s/{sample}_R2_processed.fastq.gz")
     log:
         "logs/02_UMI_extraction/{sample}_extraction_log.txt"
     conda:
@@ -85,6 +86,34 @@ rule umi_extraction:
             --bc-pattern NNNNNNNN \
             --log {log}
         """
+
+rule umiextraction_check:
+    input:
+        r1_original = "data/{sample}_R1.fastq.gz",
+        r2_original = "data/{sample}_R2.fastq.gz",
+        r1_umi = "results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz",
+        r2_umi = "results/preprocess_01/02_UMI_extraction/Read2s/{sample}_R2_processed.fastq.gz"
+    output:
+        r1_original_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R1.fastq",
+        r2_original_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R2.fastq",
+        r1_umi_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/umiextracted_{sample}_R1.fastq",
+        r2_umi_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/umiextracted_{sample}_R2.fastq"
+    params:
+        n_lines = 100
+    shell:
+    """
+    # original R1
+    zcat {input.r1_original} | head -n {params.n_lines} > {output.r1_original_checked}
+
+    # original R2
+    zcat {input.r2_original} | head -n {params.n_lines} > {output.r2_original_checked}
+
+    # UMI extracted R1
+    zcat {input.r1_umi} | head -n {params.n_lines} > {output.r1_umi_checked}
+
+    # UMI extracted R2
+    zcat {input.r2_umi} | head -n {params.n_lines} > {output.r2_umi_checked}
+    """
 
 rule trimming:
     input:
