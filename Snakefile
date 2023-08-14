@@ -417,15 +417,19 @@ rule multiqc:
     input:
         lambda wildcards: expand("results/preprocess_01/{analysis}/{subfolder}", analysis=wildcards.analysis, subfolder=wildcards.subfolder) if wildcards.subfolder != 'none' else expand("results/preprocess_01/{analysis}", analysis=wildcards.analysis)
     output:
-        html=lambda wildcards: f"results/qc_plots_02/{wildcards.analysis}/{wildcards.subfolder}/multiqc_report.html" if wildcards.subfolder != 'none' else f"results/qc_plots_02/{wildcards.analysis}/multiqc_report.html"
+        html="results/qc_plots_02/{analysis}/{subfolder}/multiqc_report.html"
     params:
-        outdir=lambda wildcards: f"results/qc_plots_02/{wildcards.analysis}/{wildcards.subfolder}" if wildcards.subfolder != 'none' else f"results/qc_plots_02/{wildcards.analysis}",
+        outdir="results/qc_plots_02/{analysis}/{subfolder}",
         configfile="envs/multiqc_config.yaml"
     conda:
         "envs/multiqc.yaml"
     shell:
         """
-        multiqc -c {params.configfile} -o {params.outdir} {input} -p -s -d
+        outdir={params.outdir}
+        if [ "{wildcards.subfolder}" = "none" ]; then
+            outdir="results/qc_plots_02/{wildcards.analysis}"
+        fi
+        multiqc -c {params.configfile} -o $outdir {input} -p -s -d
         """
 
 rule plot_tin_scores:
