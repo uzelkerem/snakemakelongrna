@@ -1,4 +1,5 @@
 configfile: "config.yaml"
+ruleorder: multiqc_with_subfolder > multiqc_without_subfolder
 
 # Expand analysis directories and their subdirectories for rule all targets
 analysis_targets = []
