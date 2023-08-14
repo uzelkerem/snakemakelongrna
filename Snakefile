@@ -419,7 +419,7 @@ rule multiqc:
     output:
         html="results/qc_plots_02/{analysis}/{subfolder}/multiqc_report.html"
     params:
-        outdir="results/qc_plots_02/{analysis}/{subfolder}"
+        outdir="results/qc_plots_02/{analysis}/{subfolder}",
         configfile="envs/multiqc_config.yaml"
     conda:
         "envs/multiqc.yaml"
