@@ -3,6 +3,7 @@ configfile: "config.yaml"
 # Expand analysis directories and their subdirectories for rule all targets
 analysis_targets = []
 for analysis in config["ANALYSIS_DIRS"]:
+    # Skip if run_rseqc is False and the analysis is 12_GeneBodyCov
     if (not config["run_rseqc"] and (analysis == "12_GeneBodyCov" or (isinstance(analysis, dict) and "12_GeneBodyCov" in analysis))):
         continue
     if isinstance(analysis, dict):
@@ -10,8 +11,7 @@ for analysis in config["ANALYSIS_DIRS"]:
             for sub in subdirs:
                 analysis_targets.append(f"results/qc_plots_02/{key}/{sub}/multiqc_report.html")
     else:
-        analysis_targets.append(f"results/qc_plots_02/{analysis}/none/multiqc_report.html")
-
+        analysis_targets.append(f"results/qc_plots_02/{analysis}/multiqc_report.html")
 
 rule all:
     input:
