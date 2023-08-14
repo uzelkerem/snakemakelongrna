@@ -114,7 +114,6 @@ rule umiextraction_check:
 
         # UMI extracted R2
         shell("zcat {input.r2_umi} | awk 'NR <= 100' > {output.r2_umi_checked}")
-        """
 
 rule trimming:
     input:
