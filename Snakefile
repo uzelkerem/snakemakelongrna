@@ -430,7 +430,7 @@ rule multiqc_with_subfolder:
 
 rule multiqc_without_subfolder:
     input:
-        expand("results/preprocess_01/{analysis}", analysis=wildcards.analysis)
+        lambda wildcards: expand("results/preprocess_01/{analysis}", analysis=wildcards.analysis)
     output:
         html="results/qc_plots_02/{analysis}/multiqc_report.html"
     params:
