@@ -1,0 +1,12 @@
+name: r_ggplot2
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - r-base=4.1.1
+  - r-ggplot2=3.3.5
+  - r-reshape2=1.4.4
+  - libblas=3.9
+  - libcblas=3.9
+  - liblapack=3.9
+  - liblapacke=3.9
