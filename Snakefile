@@ -1,18 +1,12 @@
 configfile: "config.yaml"
-ruleorder: multiqc_with_subfolder > multiqc_without_subfolder
 
 # Expand analysis directories and their subdirectories for rule all targets
 analysis_targets = []
 for analysis in config["ANALYSIS_DIRS"]:
     # Skip if run_rseqc is False and the analysis is 12_GeneBodyCov
-    if (not config["run_rseqc"] and (analysis == "12_GeneBodyCov" or (isinstance(analysis, dict) and "12_GeneBodyCov" in analysis))):
+    if (not config["run_rseqc"] and analysis == "12_GeneBodyCov"):
         continue
-    if isinstance(analysis, dict):
-        for key, subdirs in analysis.items():
-            for sub in subdirs:
-                analysis_targets.append(f"results/qc_plots_02/{key}/{sub}/multiqc_report.html")
-    else:
-        analysis_targets.append(f"results/qc_plots_02/{analysis}/multiqc_report.html")
+    analysis_targets.append(f"results/qc_plots_02/{analysis}/multiqc_report.html")
 
 rule all:
     input:
@@ -22,35 +16,35 @@ rule all:
         "results/preprocess_01/03_trimmed_data/.dir",
         "results/preprocess_01/04_FastQC_trimmed_data/.dir",
         "results/preprocess_01/05_sortmernaed_data/.dir",
-        "results/preprocess_01/06_FQScreen/.dir",
+        "results/preprocess_01/06_01_FQScreen_trimmed_data/.dir",
+        "results/preprocess_01/06_02_FQScreen_sortmernaed_data/.dir",
         "results/preprocess_01/07_star_aligned/.dir",
         "results/preprocess_01/08_umi_deduplicated/.dir",
-        "results/preprocess_01/09_picard_markdup/.dir",
+        "results/preprocess_01/09_01_markdup_beforeumidedup/.dir",
+        "results/preprocess_01/09_02_markdup_afterumidedup/.dir",
         "results/preprocess_01/10_featureCounts/.dir",
         "results/preprocess_01/11_TinScore/.dir",
         "results/preprocess_01/12_GeneBodyCov/.dir",
         "results/qc_plots_02/01_FastQC_raw_data/.dir",
-        "results/qc_plots_02/02_UMI_extraction/seq_check/.dir",
         "results/qc_plots_02/03_trimmed_data/.dir",
         "results/qc_plots_02/04_FastQC_trimmed_data/.dir",
-        "results/qc_plots_02/06_FQScreen/from_trimmed_data/.dir",
-        "results/qc_plots_02/06_FQScreen/from_sortmernaed_data/.dir",
+        "results/qc_plots_02/06_01_FQScreen_trimmed_data/.dir",
+        "results/qc_plots_02/06_02_FQScreen_sortmernaed_data/.dir",
         "results/qc_plots_02/07_star_aligned/.dir",
         "results/qc_plots_02/08_umi_deduplicated/.dir",
-        "results/qc_plots_02/09_picard_markdup/beforeumidedup/.dir",
-        "results/qc_plots_02/09_picard_markdup/afterumidedup/.dir",
+        "results/qc_plots_02/09_01_markdup_beforeumidedup/.dir",
+        "results/qc_plots_02/09_02_markdup_afterumidedup/.dir",
         "results/qc_plots_02/10_featureCounts/.dir",
         "results/qc_plots_02/11_TinScore/.dir",
         "results/qc_plots_02/12_GeneBodyCov/.dir",
         "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
         "results/preprocess_01/11_TinScore/merged.tsv" if config["run_rseqc"] else None,
-        expand("results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R1.fastq", sample=config["samples"][:2]),
         expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"]) if config["run_rseqc"] else [],
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
-                "results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
-                "results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
+                "results/preprocess_01/06_02_FQScreen_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
+                "results/preprocess_01/09_02_markdup_afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -113,33 +107,6 @@ rule umi_extraction:
             --read2-in {input.r1} --read2-out {output.out_r1} \
             --bc-pattern NNNNNNNN \
             --log {log}
-        """
-
-rule umiextraction_check:
-    input:
-        folder = "results/qc_plots_02/02_UMI_extraction/seq_check/.dir",
-        r1_original = "data/{sample}_R1.fastq.gz",
-        r2_original = "data/{sample}_R2.fastq.gz",
-        r1_umi = "results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz",
-        r2_umi = "results/preprocess_01/02_UMI_extraction/Read2s/{sample}_R2_processed.fastq.gz"
-    output:
-        r1_original_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R1.fastq",
-        r2_original_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R2.fastq",
-        r1_umi_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/umiextracted_{sample}_R1.fastq",
-        r2_umi_checked = "results/qc_plots_02/02_UMI_extraction/seq_check/umiextracted_{sample}_R2.fastq"
-    shell:
-        """
-        # original R1
-        zcat {input.r1_original} | awk 'NR <= 100' > {output.r1_original_checked}
-
-        # original R2
-        zcat {input.r2_original} | awk 'NR <= 100' > {output.r2_original_checked}
-
-        # UMI extracted R1
-        zcat {input.r1_umi} | awk 'NR <= 100' > {output.r1_umi_checked}
-
-        # UMI extracted R2
-        zcat {input.r2_umi} | awk 'NR <= 100' > {output.r2_umi_checked}
         """
 
 rule trimming:
@@ -239,13 +206,13 @@ rule fqscreen_trimmed_data:
         trimmed_fq="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz",
         sortmernaed_fq="results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz"
     output:
-        trimmed_fqscreen_html="results/preprocess_01/06_FQScreen/from_trimmed_data/{sample}_R1_processed_trimmed_screen.html",
-        trimmed_fqscreen_txt="results/preprocess_01/06_FQScreen/from_trimmed_data/{sample}_R1_processed_trimmed_screen.txt",
-        sortmernaed_fqscreen_html="results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
-        sortmernaed_fqscreen_txt="results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.txt"        
+        trimmed_fqscreen_html="results/preprocess_01/06_01_FQScreen_trimmed_data/{sample}_R1_processed_trimmed_screen.html",
+        trimmed_fqscreen_txt="results/preprocess_01/06_01_FQScreen_trimmed_data/{sample}_R1_processed_trimmed_screen.txt",
+        sortmernaed_fqscreen_html="results/preprocess_01/06_02_FQScreen_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
+        sortmernaed_fqscreen_txt="results/preprocess_01/06_02_FQScreen_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.txt"        
     log:
-        trimmed="logs/06_FQScreen/{sample}_R1_trimmed.log",
-        sortmernaed="logs/06_FQScreen/{sample}_R1_sortmernaed.log"
+        trimmed="logs/06_01_FQScreen_trimmed_data/{sample}_R1_trimmed.log",
+        sortmernaed="logs/06_02_FQScreen_sortmernaed_data/{sample}_R1_sortmernaed.log"
     conda:
         "envs/fqscreen.yaml"
     threads: 4
@@ -253,11 +220,11 @@ rule fqscreen_trimmed_data:
         """
         fastq_screen --aligner bowtie2 --threads {threads} \
         --conf {config[fastq_screen_conf]} \
-        --outdir results/preprocess_01/06_FQScreen/from_trimmed_data {input.trimmed_fq} > {log.trimmed} 2>&1
+        --outdir results/preprocess_01/06_01_FQScreen_trimmed_data {input.trimmed_fq} > {log.trimmed} 2>&1
 
         fastq_screen --aligner bowtie2 --threads {threads} \
         --conf {config[fastq_screen_conf]} \
-        --outdir results/preprocess_01/06_FQScreen/from_sortmernaed_data {input.sortmernaed_fq} > {log.sortmernaed} 2>&1
+        --outdir results/preprocess_01/06_02_FQScreen_sortmernaed_data {input.sortmernaed_fq} > {log.sortmernaed} 2>&1
         """
 
 rule star_aligner:
@@ -321,11 +288,11 @@ rule picard_markduplicates:
         beforeumi_bam="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam",
         afterumi_bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
     output:
-        beforeumi_metrics="results/preprocess_01/09_picard_markdup/beforeumidedup/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out_marked_duplicates_metrics.txt",
-        afterumi_metrics="results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt"
+        beforeumi_metrics="results/preprocess_01/09_01_markdup_beforeumidedup/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out_marked_duplicates_metrics.txt",
+        afterumi_metrics="results/preprocess_01/09_02_markdup_afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt"
     log:
-        beforeumi="logs/09_picard_markdup/{sample}_beforeumi_markdup_log.txt",
-        afterumi="logs/09_picard_markdup/{sample}_afterumi_markdup_log.txt"
+        beforeumi="logs/09_01_markdup_beforeumidedup/{sample}_beforeumi_markdup_log.txt",
+        afterumi="logs/09_02_markdup_afterumidedup/{sample}_afterumi_markdup_log.txt"
     conda:
         "envs/picard.yaml"
     shell:
@@ -414,22 +381,7 @@ rule calculate_genebodycoverage:
         fi
         """
 
-rule multiqc_with_subfolder:
-    input:
-        lambda wildcards: expand("results/preprocess_01/{analysis}/{subfolder}", analysis=wildcards.analysis, subfolder=wildcards.subfolder)
-    output:
-        html="results/qc_plots_02/{analysis}/{subfolder}/multiqc_report.html"
-    params:
-        outdir="results/qc_plots_02/{analysis}/{subfolder}",
-        configfile="envs/multiqc_config.yaml"
-    conda:
-        "envs/multiqc.yaml"
-    shell:
-        """
-        multiqc -c {params.configfile} -o {params.outdir} {input} -p -s -d
-        """
-
-rule multiqc_without_subfolder:
+rule multiqc:
     input:
         lambda wildcards: expand("results/preprocess_01/{analysis}", analysis=wildcards.analysis)
     output:

@@ -27,23 +27,24 @@ directories:
   - results/preprocess_01/04_FastQC_trimmed_data
   - results/preprocess_01/05_sortmernaed_data
   - results/preprocess_01/05_sortmernaed_data/zipped
-  - results/preprocess_01/06_FQScreen
+  - results/preprocess_01/06_01_FQScreen_trimmed_data
+  - results/preprocess_01/06_02_FQScreen_sortmernaed_data
   - results/preprocess_01/07_star_aligned
   - results/preprocess_01/08_umi_deduplicated
-  - results/preprocess_01/09_picard_markdup
+  - results/preprocess_01/09_01_markdup_beforeumidedup
+  - results/preprocess_01/09_02_markdup_afterumidedup
   - results/preprocess_01/10_featureCounts
   - results/preprocess_01/11_TinScore
   - results/preprocess_01/12_GeneBodyCov
-  - results/qc_plots_02/02_UMI_extraction/seq_check
   - results/qc_plots_02/01_FastQC_raw_data
   - results/qc_plots_02/03_trimmed_data
   - results/qc_plots_02/04_FastQC_trimmed_data
-  - results/qc_plots_02/06_FQScreen/from_trimmed_data
-  - results/qc_plots_02/06_FQScreen/from_sortmernaed_data
+  - results/qc_plots_02/06_01_FQScreen_trimmed_data
+  - results/qc_plots_02/06_02_FQScreen_sortmernaed_data
   - results/qc_plots_02/07_star_aligned
   - results/qc_plots_02/08_umi_deduplicated
-  - results/qc_plots_02/09_picard_markdup/beforeumidedup
-  - results/qc_plots_02/09_picard_markdup/afterumidedup
+  - results/qc_plots_02/09_01_markdup_beforeumidedup
+  - results/qc_plots_02/09_02_markdup_afterumidedup
   - results/qc_plots_02/10_featureCounts
   - results/qc_plots_02/11_TinScore
   - results/qc_plots_02/12_GeneBodyCov
@@ -52,10 +53,12 @@ directories:
   - logs/03_trimming
   - logs/04_FastQC_trimmed
   - logs/05_sortmerna
-  - logs/06_FQScreen
+  - logs/06_01_FQScreen_trimmed_data
+  - logs/06_02_FQScreen_sortmernaed_data
   - logs/07_staraligner
   - logs/08_UMI_deduplication
-  - logs/09_picard_markdup
+  - logs/09_01_markdup_beforeumidedup
+  - logs/09_02_markdup_afterumidedup
   - logs/10_featureCounts
 trimming_params:
     quality: 30
@@ -78,13 +81,11 @@ ANALYSIS_DIRS:
   - 01_FastQC_raw_data
   - 03_trimmed_data
   - 04_FastQC_trimmed_data
-  - 06_FQScreen:
-    - from_trimmed_data
-    - from_sortmernaed_data
+  - 06_01_FQScreen_trimmed_data
+  - 06_02_FQScreen_sortmernaed_data
   - 07_star_aligned
   - 08_umi_deduplicated
-  - 09_picard_markdup:
-    - beforeumidedup
-    - afterumidedup
+  - 09_01_markdup_beforeumidedup
+  - 09_02_markdup_afterumidedup
   - 10_featureCounts
   - 12_GeneBodyCov
