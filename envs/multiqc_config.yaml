@@ -1,1 +1,2 @@
-export_plots_formats: ['pdf']
+export_plots:
+    formats: ['pdf']
