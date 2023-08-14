@@ -104,16 +104,16 @@ rule umiextraction_check:
         n_lines = 100
     run:
         # original R1
-        shell("zcat {input.r1_original} | head -n {params.n_lines} > {output.r1_original_checked}")
+        shell("zcat {input.r1_original} | awk 'NR <= 100' > {output.r1_original_checked}")
 
         # original R2
-        shell("zcat {input.r2_original} | head -n {params.n_lines} > {output.r2_original_checked}")
+        shell("zcat {input.r2_original} | awk 'NR <= 100' > {output.r2_original_checked}")
 
         # UMI extracted R1
-        shell("zcat {input.r1_umi} | head -n {params.n_lines} > {output.r1_umi_checked}")
+        shell("zcat {input.r1_umi} | awk 'NR <= 100' > {output.r1_umi_checked}")
 
         # UMI extracted R2
-        shell("zcat {input.r2_umi} | head -n {params.n_lines} > {output.r2_umi_checked}")
+        shell("zcat {input.r2_umi} | awk 'NR <= 100' > {output.r2_umi_checked}")
 
 rule trimming:
     input:
