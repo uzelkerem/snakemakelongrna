@@ -4,7 +4,7 @@ rule all:
     input:
         "results/preprocess_01/01_FastQC_raw_data/.dir",
         "results/preprocess_01/02_UMI_extraction/.dir",
-        expand("some_outputfolder/original_{sample}_R1.fastq", sample=config["samples"][:2]),
+        expand("results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R1.fastq", sample=config["samples"][:2]),
         "results/preprocess_01/03_trimmed_data/.dir",
         "results/preprocess_01/04_FastQC_trimmed_data/.dir",
         "results/preprocess_01/05_sortmernaed_data/.dir",
