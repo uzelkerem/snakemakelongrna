@@ -14,7 +14,7 @@ rule all:
         "results/preprocess_01/10_featureCounts/.dir",
         "results/preprocess_01/11_TinScore/.dir",
         "results/preprocess_01/12_GeneBodyCov/.dir",
-        "results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt",
+        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
         "results/preprocess_01/11_TinScore/merged.tsv",
         expand(
             [
@@ -285,10 +285,10 @@ rule feature_counts:
     input:
         bams=expand("results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam", sample=config["samples"])
     output:
-        counts="results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt",
-        summary="results/preprocess_01/10_featureCounts/fig2_counts_gtfD_s02.txt.summary"
+        counts="results/preprocess_01/10_featureCounts/{prefix_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
+        summary="results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt.summary".format(prefix=config['prefix'])
     log:
-        "logs/10_featureCounts/fig2_counts_gtfD_s02.log"
+        "logs/10_featureCounts/{prefix_counts_gtfD_s02_sortmerna.log".format(prefix=config['prefix'])
     conda:
         "envs/featurecounts.yaml"
     threads: 8
