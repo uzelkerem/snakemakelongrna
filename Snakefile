@@ -101,19 +101,19 @@ rule umiextraction_check:
     params:
         n_lines = 100
     shell:
-    """
-    # original R1
-    zcat {input.r1_original} | head -n {params.n_lines} > {output.r1_original_checked}
+        """
+        # original R1
+        zcat {input.r1_original} | head -n {params.n_lines} > {output.r1_original_checked}
 
-    # original R2
-    zcat {input.r2_original} | head -n {params.n_lines} > {output.r2_original_checked}
+        # original R2
+        zcat {input.r2_original} | head -n {params.n_lines} > {output.r2_original_checked}
 
-    # UMI extracted R1
-    zcat {input.r1_umi} | head -n {params.n_lines} > {output.r1_umi_checked}
+        # UMI extracted R1
+        zcat {input.r1_umi} | head -n {params.n_lines} > {output.r1_umi_checked}
 
-    # UMI extracted R2
-    zcat {input.r2_umi} | head -n {params.n_lines} > {output.r2_umi_checked}
-    """
+        # UMI extracted R2
+        zcat {input.r2_umi} | head -n {params.n_lines} > {output.r2_umi_checked}
+        """
 
 rule trimming:
     input:
