@@ -1,4 +1,5 @@
 prefix: "HSC_Fig2"
+run_rseqc: True
 samples:
   - HSC_1
   - HSC_2
@@ -33,9 +34,19 @@ directories:
   - results/preprocess_01/10_featureCounts
   - results/preprocess_01/11_TinScore
   - results/preprocess_01/12_GeneBodyCov
-  - results/qc_plots_02
-  - results/qc_plots_02/02_UMI_extraction
   - results/qc_plots_02/02_UMI_extraction/seq_check
+  - results/qc_plots_02/01_FastQC_raw_data
+  - results/qc_plots_02/03_trimmed_data
+  - results/qc_plots_02/04_FastQC_trimmed_data
+  - results/qc_plots_02/06_FQScreen/from_trimmed_data
+  - results/qc_plots_02/06_FQScreen/from_sortmernaed_data
+  - results/qc_plots_02/07_star_aligned
+  - results/qc_plots_02/08_umi_deduplicated
+  - results/qc_plots_02/09_picard_markdup/beforeumidedup
+  - results/qc_plots_02/09_picard_markdup/afterumidedup
+  - results/qc_plots_02/10_featureCounts
+  - results/qc_plots_02/11_TinScore
+  - results/qc_plots_02/12_GeneBodyCov
   - logs/01_FastQC_rawdata
   - logs/02_UMI_extraction
   - logs/03_trimming

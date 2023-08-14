@@ -1,8 +1,10 @@
 configfile: "config.yaml"
 
-# Expand analysis directories and their subdirectories for rule targets
+# Expand analysis directories and their subdirectories for rule all targets
 analysis_targets = []
 for analysis in config["ANALYSIS_DIRS"]:
+    if (not config["run_rseqc"] and (analysis == "12_GeneBodyCov" or (isinstance(analysis, dict) and "12_GeneBodyCov" in analysis))):
+        continue
     if isinstance(analysis, dict):
         for key, subdirs in analysis.items():
             for sub in subdirs:
@@ -10,13 +12,12 @@ for analysis in config["ANALYSIS_DIRS"]:
     else:
         analysis_targets.append(f"results/qc_plots_02/{analysis}/none/multiqc_report.html")
 
+
 rule all:
     input:
         analysis_targets,
         "results/preprocess_01/01_FastQC_raw_data/.dir",
         "results/preprocess_01/02_UMI_extraction/.dir",
-        "results/qc_plots_02/02_UMI_extraction/seq_check/.dir",
-        expand("results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R1.fastq", sample=config["samples"][:2]),
         "results/preprocess_01/03_trimmed_data/.dir",
         "results/preprocess_01/04_FastQC_trimmed_data/.dir",
         "results/preprocess_01/05_sortmernaed_data/.dir",
@@ -27,14 +28,28 @@ rule all:
         "results/preprocess_01/10_featureCounts/.dir",
         "results/preprocess_01/11_TinScore/.dir",
         "results/preprocess_01/12_GeneBodyCov/.dir",
+        "results/qc_plots_02/01_FastQC_raw_data/.dir",
+        "results/qc_plots_02/02_UMI_extraction/seq_check/.dir",
+        "results/qc_plots_02/03_trimmed_data/.dir",
+        "results/qc_plots_02/04_FastQC_trimmed_data/.dir",
+        "results/qc_plots_02/06_FQScreen/from_trimmed_data/.dir",
+        "results/qc_plots_02/06_FQScreen/from_sortmernaed_data/.dir",
+        "results/qc_plots_02/07_star_aligned/.dir",
+        "results/qc_plots_02/08_umi_deduplicated/.dir",
+        "results/qc_plots_02/09_picard_markdup/beforeumidedup/.dir",
+        "results/qc_plots_02/09_picard_markdup/afterumidedup/.dir",
+        "results/qc_plots_02/10_featureCounts/.dir",
+        "results/qc_plots_02/11_TinScore/.dir",
+        "results/qc_plots_02/12_GeneBodyCov/.dir",
         "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
-        "results/preprocess_01/11_TinScore/merged.tsv",
+        "results/preprocess_01/11_TinScore/merged.tsv" if config["run_rseqc"] else None,
+        expand("results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R1.fastq", sample=config["samples"][:2]),
+        expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"]) if config["run_rseqc"] else []
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
                 "results/preprocess_01/06_FQScreen/from_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
                 "results/preprocess_01/09_picard_markdup/afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
-                "results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
             ],
@@ -352,9 +367,11 @@ rule calculate_tin:
     conda:
         "envs/rseqc.yaml"
     threads: 8
-
-    shell:
-        "calculate-tin.py -r {config[bed_file]} -i {input.bam} --names={wildcards.sample} -p {threads} 1> {output.tsv}"
+    run:
+        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
+        shell(
+            "calculate-tin.py -r {config[bed_file]} -i {input.bam} --names={wildcards.sample} -p {threads} 1> {output.tsv}"
+        )
 
 rule merge_tin:
     input:
@@ -363,10 +380,11 @@ rule merge_tin:
         "results/preprocess_01/11_TinScore/merged.tsv"
     conda:
         "envs/rseqc.yaml"
-    shell:
-        """
-        merge-tin.py --input-files {input} --output-file {output}
-        """
+    run:
+        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
+        shell(
+            "merge-tin.py --input-files {input} --output-file {output}"
+        )
 
 rule calculate_genebodycoverage:
     input:
@@ -377,8 +395,11 @@ rule calculate_genebodycoverage:
         txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt"
     conda:
         "envs/rseqc.yaml"
-    shell:
-        "geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}"
+    run:
+        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
+        shell(
+            "geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}"
+        )
 
 rule multiqc:
     input:
@@ -394,3 +415,18 @@ rule multiqc:
         """
         multiqc -c {params.configfile} -o {params.outdir} {input} -p -s -d
         """
+
+rule plot_tin_scores:
+    input:
+        "results/preprocess_01/11_TinScore/merged.tsv"
+    output:
+        "results/qc_plots_02/11_TinScore/tin_scores.png"
+    conda:
+        "envs/r_ggplot2.yaml" 
+    script:
+        "scripts/plot_tin_scores.R"
+    run:
+        assert config["run_rseqc"], "RSeQC analysis is turned off in the config."
+        shell(
+            "Rscript {script} {input} {output}"
+        )
