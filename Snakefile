@@ -44,7 +44,7 @@ rule all:
         "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
         "results/preprocess_01/11_TinScore/merged.tsv" if config["run_rseqc"] else None,
         expand("results/qc_plots_02/02_UMI_extraction/seq_check/original_{sample}_R1.fastq", sample=config["samples"][:2]),
-        expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"]) if config["run_rseqc"] else []
+        expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"]) if config["run_rseqc"] else [],
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
