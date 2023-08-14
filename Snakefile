@@ -91,7 +91,7 @@ rule trimming:
         fastq="results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz"
     output:
         trimmed="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz",
-        report="results/preprocess_01/03_trimmed_data/{sample}_R1_processed.fastq.gz_trimming_report.txt"
+        report="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimming_report.txt"
     params:
         quality=config["trimming_params"]["quality"],
         length=config["trimming_params"]["length"],
@@ -109,6 +109,9 @@ rule trimming:
             --stringency {params.stringency} \
             -o results/preprocess_01/03_trimmed_data/ \
             > {log} 2>&1
+        
+        # Rename the trimming report
+        mv results/preprocess_01/03_trimmed_data/{wildcards.sample}_R1_processed.fastq.gz_trimming_report.txt {output.report}
         """
 
 rule fqc_trimmed_data:
