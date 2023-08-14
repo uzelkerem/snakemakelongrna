@@ -1,7 +1,18 @@
 configfile: "config.yaml"
 
+# Expand analysis directories and their subdirectories for rule targets
+analysis_targets = []
+for analysis in config["ANALYSIS_DIRS"]:
+    if isinstance(analysis, dict):
+        for key, subdirs in analysis.items():
+            for sub in subdirs:
+                analysis_targets.append(f"results/qc_plots_02/{key}/{sub}/multiqc_report.html")
+    else:
+        analysis_targets.append(f"results/qc_plots_02/{analysis}/none/multiqc_report.html")
+
 rule all:
     input:
+        analysis_targets,
         "results/preprocess_01/01_FastQC_raw_data/.dir",
         "results/preprocess_01/02_UMI_extraction/.dir",
         "results/qc_plots_02/02_UMI_extraction/seq_check/.dir",
@@ -268,7 +279,8 @@ rule umi_deduplication:
     input:
         bam="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam"
     output:
-        dedup_bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
+        dedup_bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam",
+        copied_log="results/preprocess_01/08_umi_deduplicated/{sample}_deduplication_log.txt"
     log:
         "logs/08_UMI_deduplication/{sample}_deduplication_log.txt"
     conda:
@@ -283,6 +295,9 @@ rule umi_deduplication:
 
         # Generate index for the deduplicated BAM file
         samtools index {output.dedup_bam}
+
+        # Copy the log file to the desired output directory
+        cp {log} {output.copied_log}
         """
 
 rule picard_markduplicates:
@@ -364,3 +379,18 @@ rule calculate_genebodycoverage:
         "envs/rseqc.yaml"
     shell:
         "geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}"
+
+rule multiqc:
+    input:
+        lambda wildcards: expand("results/preprocess_01/{analysis}/{subfolder}/**", analysis=wildcards.analysis, subfolder=wildcards.subfolder) if wildcards.subfolder != 'none' else expand("results/{analysis}/**", analysis=wildcards.analysis)
+    output:
+        html="results/qc_plots_02/{analysis}/{subfolder}/multiqc_report.html"
+    params:
+        outdir="results/qc_plots_02/{analysis}/{subfolder}"
+        configfile="envs/multiqc_config.yaml"
+    conda:
+        "envs/multiqc.yaml"
+    shell:
+        """
+        multiqc -c {params.configfile} -o {params.outdir} {input} -p -s -d
+        """

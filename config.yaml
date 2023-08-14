@@ -63,3 +63,17 @@ fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/auxiliary/conf/fastq_screen.conf"
 star_genome_dir: "/mnt/groupMansuy/kerem/auxiliary/genome/staridx"
 GTF_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GCF_000001635.27_GRCm39_genomic.gtf"
 bed_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GRCm39_genomic.bed12"
+ANALYSIS_DIRS:
+  - 01_FastQC_raw_data
+  - 03_trimmed_data
+  - 04_FastQC_trimmed_data
+  - 06_FQScreen:
+    - from_trimmed_data
+    - from_sortmernaed_data
+  - 07_star_aligned
+  - 08_umi_deduplicated
+  - 09_picard_markdup:
+    - beforeumidedup
+    - afterumidedup
+  - 10_featureCounts
+  - 12_GeneBodyCov
