@@ -90,6 +90,7 @@ rule umi_extraction:
 
 rule umiextraction_check:
     input:
+        folder = "results/qc_plots_02/02_UMI_extraction/seq_check/.dir",
         r1_original = "data/{sample}_R1.fastq.gz",
         r2_original = "data/{sample}_R2.fastq.gz",
         r1_umi = "results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz",
