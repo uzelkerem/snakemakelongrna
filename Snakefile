@@ -43,6 +43,7 @@ rule all:
         expand(
             [
                 "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
+                "results/preprocess_01/06_01_FQScreen_trimmed_data/{sample}_R1_processed_trimmed_other_screen.html",
                 "results/preprocess_01/06_02_FQScreen_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
                 "results/preprocess_01/09_02_markdup_afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
                 "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
