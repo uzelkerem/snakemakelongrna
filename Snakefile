@@ -434,13 +434,11 @@ rule plot_tin_scores:
     output:
         "results/qc_plots_02/11_TinScore/tin_scores.png"
     conda:
-        "envs/r_ggplot2.yaml" 
-    script:
-        "scripts/plot_tin_scores.R"
+        "envs/r_ggplot2.yaml"
     shell:
         """
         if [ "{config[run_rseqc]}" = "True" ]; then
-            Rscript {script} {input} {output}
+            Rscript scripts/plot_tin_scores.R {input} {output}
         else
             echo "RSeQC analysis is turned off in the config."
             exit 1
