@@ -415,7 +415,7 @@ rule calculate_genebodycoverage:
 
 rule multiqc:
     input:
-        lambda wildcards: expand("results/preprocess_01/{analysis}/{subfolder}/*", analysis=wildcards.analysis, subfolder=wildcards.subfolder) if wildcards.subfolder != 'none' else expand("results/preprocess_01/{analysis}/*", analysis=wildcards.analysis)
+        lambda wildcards: expand("results/preprocess_01/{analysis}/{subfolder}", analysis=wildcards.analysis, subfolder=wildcards.subfolder) if wildcards.subfolder != 'none' else expand("results/preprocess_01/{analysis}", analysis=wildcards.analysis)
     output:
         html="results/qc_plots_02/{analysis}/{subfolder}/multiqc_report.html"
     params:
