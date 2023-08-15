@@ -73,7 +73,6 @@ ANALYSIS_DIRS:
   - 06_01_FQScreen_trimmed_data
   - 06_02_FQScreen_sortmernaed_data
   - 07_star_aligned
-  - 08_umi_deduplicated
   - 09_01_markdup_beforeumidedup
   - 09_02_markdup_afterumidedup
   - 10_featureCounts
