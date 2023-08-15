@@ -365,44 +365,6 @@ rule merge_tin:
         fi
         """
 
-rule calculate_genebodycoverage:
-    input:
-        bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
-    output:
-        pdf="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.curves.pdf",
-        r="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.r",
-        txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt",
-        completion_marker="results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt"
-    conda:
-        "envs/rseqc.yaml"
-    shell:
-        """
-        if [ "{config[run_rseqc]}" = "True" ]; then
-            geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}
-            touch {output.completion_marker}
-        else
-            echo "RSeQC analysis is turned off in the config."
-            exit 1
-        fi
-        """
-
-rule multiqc:
-    input:
-        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),    
-        "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
-        "results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt" if config["run_rseqc"] else None
-    output:
-        html="results/qc_plots_02/{analysis}/multiqc_report.html"
-    params:
-        outdir="results/qc_plots_02/{analysis}",
-        configfile="envs/multiqc_config.yaml"
-    conda:
-        "envs/multiqc.yaml"
-    shell:
-        """
-        multiqc -c {params.configfile} -o {params.outdir} results/preprocess_01/{wildcards.analysis} -p -s -d
-        """
-
 rule plot_tin_scores:
     input:
         "results/preprocess_01/11_TinScore/merged.tsv"
@@ -420,6 +382,52 @@ rule plot_tin_scores:
             echo "RSeQC analysis is turned off in the config."
             touch {output}  # Create a dummy file
         fi
+        """
+
+rule calculate_genebodycoverage:
+    input:
+        bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
+    output:
+        pdf="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.curves.pdf",
+        r="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.r",
+        txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt",
+    conda:
+        "envs/rseqc.yaml"
+    shell:
+        """
+        if [ "{config[run_rseqc]}" = "True" ]; then
+            geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}
+        else
+            echo "RSeQC analysis is turned off in the config."
+            exit 1
+        fi
+        """
+
+rule mark_genebodycoverage_completed:
+    input:
+        txts=expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"])
+    output:
+        completion_marker="results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt"
+    shell:
+        """
+        touch {output.completion_marker}
+        """
+
+rule multiqc:
+    input:
+        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),    
+        "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
+        "results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt" if config["run_rseqc"] else None
+    output:
+        html="results/qc_plots_02/{analysis}/multiqc_report.html"
+    params:
+        outdir="results/qc_plots_02/{analysis}",
+        configfile="envs/multiqc_config.yaml"
+    conda:
+        "envs/multiqc.yaml"
+    shell:
+        """
+        multiqc -c {params.configfile} -o {params.outdir} results/preprocess_01/{wildcards.analysis} -p -s -d
         """
 
 rule clean_intermediate_files:
