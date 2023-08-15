@@ -8,51 +8,51 @@ for analysis in config["ANALYSIS_DIRS"]:
         continue
     analysis_targets.append(f"results/qc_plots_02/{analysis}/multiqc_report.html")
 
+input_files = [
+    "results/preprocess_01/01_FastQC_raw_data/.dir",
+    "results/preprocess_01/02_UMI_extraction/.dir",
+    "results/preprocess_01/03_trimmed_data/.dir",
+    "results/preprocess_01/04_FastQC_trimmed_data/.dir",
+    "results/preprocess_01/05_sortmernaed_data/.dir",
+    "results/preprocess_01/06_01_FQScreen_trimmed_data/.dir",
+    "results/preprocess_01/06_02_FQScreen_sortmernaed_data/.dir",
+    "results/preprocess_01/07_star_aligned/.dir",
+    "results/preprocess_01/08_umi_deduplicated/.dir",
+    "results/preprocess_01/09_01_markdup_beforeumidedup/.dir",
+    "results/preprocess_01/09_02_markdup_afterumidedup/.dir",
+    "results/preprocess_01/10_featureCounts/.dir",
+    "results/preprocess_01/11_TinScore/.dir",
+    "results/preprocess_01/12_GeneBodyCov/.dir", 
+    "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix'])
+]
+if config["remove_intermediate_files"]:
+    input_files.append("intermediate_files_removed.txt")
+if config["run_rseqc"]:
+    input_files.extend([
+        "results/qc_plots_02/11_TinScore/tin_scores.png",
+        "results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt"
+    ])
+
+input_files.extend(
+    expand(
+        [
+            "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
+            "results/preprocess_01/06_01_FQScreen_trimmed_data/{sample}_R1_processed_trimmed_screen.html",
+            "results/preprocess_01/06_02_FQScreen_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
+            "results/preprocess_01/09_02_markdup_afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
+            "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
+            "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
+        ],
+        sample=config["samples"]
+    )
+)
+
+# Adding analysis_targets to the list of input files
+input_files.extend(analysis_targets)
+
 rule all:
     input:
-        analysis_targets,
-        "results/preprocess_01/01_FastQC_raw_data/.dir",
-        "results/preprocess_01/02_UMI_extraction/.dir",
-        "results/preprocess_01/03_trimmed_data/.dir",
-        "results/preprocess_01/04_FastQC_trimmed_data/.dir",
-        "results/preprocess_01/05_sortmernaed_data/.dir",
-        "results/preprocess_01/06_01_FQScreen_trimmed_data/.dir",
-        "results/preprocess_01/06_02_FQScreen_sortmernaed_data/.dir",
-        "results/preprocess_01/07_star_aligned/.dir",
-        "results/preprocess_01/08_umi_deduplicated/.dir",
-        "results/preprocess_01/09_01_markdup_beforeumidedup/.dir",
-        "results/preprocess_01/09_02_markdup_afterumidedup/.dir",
-        "results/preprocess_01/10_featureCounts/.dir",
-        "results/preprocess_01/11_TinScore/.dir",
-        "results/preprocess_01/12_GeneBodyCov/.dir",
-        "results/qc_plots_02/01_FastQC_raw_data/.dir",
-        "results/qc_plots_02/03_trimmed_data/.dir",
-        "results/qc_plots_02/04_FastQC_trimmed_data/.dir",
-        "results/qc_plots_02/06_01_FQScreen_trimmed_data/.dir",
-        "results/qc_plots_02/06_02_FQScreen_sortmernaed_data/.dir",
-        "results/qc_plots_02/07_star_aligned/.dir",
-        "results/qc_plots_02/08_umi_deduplicated/.dir",
-        "results/qc_plots_02/09_01_markdup_beforeumidedup/.dir",
-        "results/qc_plots_02/09_02_markdup_afterumidedup/.dir",
-        "results/qc_plots_02/10_featureCounts/.dir",
-        "results/qc_plots_02/11_TinScore/.dir",
-        "results/qc_plots_02/12_GeneBodyCov/.dir",
-        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
-        "intermediate_files_removed.txt" if config["remove_intermediate_files"] else None,
-        "results/preprocess_01/11_TinScore/merged.tsv" if config["run_rseqc"] else None,
-        "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
-        expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"]) if config["run_rseqc"] else [],
-        expand(
-            [
-                "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
-                "results/preprocess_01/06_01_FQScreen_trimmed_data/{sample}_R1_processed_trimmed_screen.html",
-                "results/preprocess_01/06_02_FQScreen_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
-                "results/preprocess_01/09_02_markdup_afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
-                "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
-                "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
-            ],
-            sample=config["samples"]
-        )
+        input_files
 
 rule setup_directories:
     output:
