@@ -1,5 +1,6 @@
 prefix: "HSC_Fig2"
 run_rseqc: True
+remove_intermediate_files: False
 samples:
   - HSC_1
   - HSC_2

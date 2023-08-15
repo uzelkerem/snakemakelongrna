@@ -38,6 +38,7 @@ rule all:
         "results/qc_plots_02/11_TinScore/.dir",
         "results/qc_plots_02/12_GeneBodyCov/.dir",
         "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
+        "intermediate_files_removed.txt" if config["remove_intermediate_files"] else None,
         "results/preprocess_01/11_TinScore/merged.tsv" if config["run_rseqc"] else None,
         "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
         expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"]) if config["run_rseqc"] else [],
@@ -370,13 +371,15 @@ rule calculate_genebodycoverage:
     output:
         pdf="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.curves.pdf",
         r="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.r",
-        txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt"
+        txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt",
+        completion_marker="results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt"
     conda:
         "envs/rseqc.yaml"
     shell:
         """
         if [ "{config[run_rseqc]}" = "True" ]; then
             geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}
+            touch {output.completion_marker}
         else
             echo "RSeQC analysis is turned off in the config."
             exit 1
@@ -385,7 +388,9 @@ rule calculate_genebodycoverage:
 
 rule multiqc:
     input:
-        directories=expand("results/preprocess_01/{analysis}/.dir", analysis=config["ANALYSIS_DIRS"])
+        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix'])    
+        "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
+        "results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt" if config["run_rseqc"] else None
     output:
         html="results/qc_plots_02/{analysis}/multiqc_report.html"
     params:
@@ -405,12 +410,37 @@ rule plot_tin_scores:
         "results/qc_plots_02/11_TinScore/tin_scores.png"
     conda:
         "envs/r_ggplot2.yaml"
+    params:
+        run = config["run_rseqc"]
     shell:
         """
-        if [ "{config[run_rseqc]}" = "True" ]; then
+        if [ "{params.run}" = "True" ]; then
             Rscript scripts/plot_tin_scores.R {input} {output}
         else
             echo "RSeQC analysis is turned off in the config."
-            exit 1
+            touch {output}  # Create a dummy file
         fi
         """
+
+rule clean_intermediate_files:
+    input:
+        # The final files you need; this ensures cleanup happens only after everything is done
+        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix'])    
+    output:
+        report="intermediate_files_removed.txt"  # A record of cleanup
+    params:
+        # Directories where you want to remove specific file patterns
+        folders_with_patterns = {
+            "results/stepX/": "*_R1_processed_trimmed.fq.gz",
+            "results/stepY/": "*.some_other_pattern",
+            # ... other directories and patterns ...
+        }
+    run:
+        import glob
+
+        with open(output.report, "w") as report:
+            for folder, pattern in params.folders_with_patterns.items():
+                files_to_remove = glob.glob(folder + pattern)
+                for file in files_to_remove:
+                    report.write(f"Removing file: {file}\n")
+                    os.remove(file)
