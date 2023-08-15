@@ -388,7 +388,7 @@ rule calculate_genebodycoverage:
 
 rule multiqc:
     input:
-        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix'])    
+        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),    
         "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
         "results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt" if config["run_rseqc"] else None
     output:
