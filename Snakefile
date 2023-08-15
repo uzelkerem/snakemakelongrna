@@ -39,6 +39,7 @@ rule all:
         "results/qc_plots_02/12_GeneBodyCov/.dir",
         "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),
         "results/preprocess_01/11_TinScore/merged.tsv" if config["run_rseqc"] else None,
+        "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
         expand("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt", sample=config["samples"]) if config["run_rseqc"] else [],
         expand(
             [
