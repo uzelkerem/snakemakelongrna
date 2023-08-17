@@ -4,6 +4,6 @@ channels:
 dependencies:
   - python =3.11.4
   - pip =23.2.1
-  - samtools = 1.17
+  - samtools = 1.5
   - pip:
     - umi-tools==1.1.4
