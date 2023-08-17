@@ -98,7 +98,7 @@ rule umi_extraction:
         r1="data/{sample}_R1.fastq.gz",
         r2="data/{sample}_R2.fastq.gz"
     output:
-        out_r1="results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz",
+        out_r1=temp("results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz"),
         out_r2=temp("results/preprocess_01/02_UMI_extraction/Read2s/{sample}_R2_processed.fastq.gz")
     log:
         "logs/02_UMI_extraction/{sample}_extraction_log.txt"
@@ -116,7 +116,7 @@ rule trimming:
     input:
         fastq="results/preprocess_01/02_UMI_extraction/{sample}_R1_processed.fastq.gz"
     output:
-        trimmed="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz",
+        trimmed=temp("results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimmed.fq.gz"),
         report="results/preprocess_01/03_trimmed_data/{sample}_R1_processed_trimming_report.txt"
     params:
         quality=config["trimming_params"]["quality"],
@@ -167,7 +167,9 @@ rule sort_rRNAs_out:
         trimmed_fq="results/preprocess_01/03_trimmed_data/unzipped/{sample}_R1_processed_trimmed.fq",
         refs=expand("{ref}", ref=config["sortmerna_ref"])
     output:
-        other=temp("results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq")
+        other=temp("results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"),
+        aligned=temp("results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned.fq"),
+        report="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned.log"
     log:
         "logs/05_sortmerna/{sample}_sortmernaed.log"
     conda:
@@ -190,6 +192,7 @@ rule sort_rRNAs_out:
         --workdir $working_dir \
         --reads {input.trimmed_fq} --threads {threads} \
         --other results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_other \
+        --aligned results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_other \
         --fastx > {log} 2>&1
         
         # Optionally clean up the temporary directories if needed
@@ -200,7 +203,7 @@ rule zip_sortmernaed:
     input:
         other_fq="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"
     output:
-        fqgz="results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz"
+        fqgz=temp("results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz")
     shell:
         "gzip -c {input.other_fq} > {output.fqgz}"  
 
@@ -234,7 +237,7 @@ rule star_aligner:
     input:
         fastq="results/preprocess_01/05_sortmernaed_data/zipped/{sample}_R1_processed_trimmed_other.fq.gz",
     output:
-        bam="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam",
+        bam=temp("results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam"),
         idx="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam.bai",
         idxstat="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.idxstats",
         flagstat="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.flagstat"
@@ -386,15 +389,19 @@ rule plot_tin_scores:
 
 rule calculate_genebodycoverage:
     input:
-        bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
+        bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam",
+        bam_index="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam.bai"
     output:
-        pdf="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.curves.pdf",
-        r="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.r",
+        pdf=temp("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.curves.pdf"),
+        r=temp("results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.r"),
         txt="results/preprocess_01/12_GeneBodyCov/{sample}.geneBodyCoverage.txt",
     conda:
         "envs/rseqc.yaml"
     shell:
         """
+        # Update the access and modification times of the index files
+        touch {input.bam_index}
+        
         if [ "{config[run_rseqc]}" = "True" ]; then
             geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}
         else
