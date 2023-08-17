@@ -1,6 +1,7 @@
 channels:
   - conda-forge
   - bioconda
+  - defaults
 dependencies:
   - python =3.11.4
   - pip =23.2.1
