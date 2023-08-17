@@ -1,6 +1,5 @@
 channels:
-  - conda-forge
   - bioconda
-  - defaults
+  - conda-forge
 dependencies:
   - fastqc =0.12.1
