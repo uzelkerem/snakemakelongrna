@@ -168,8 +168,6 @@ rule sort_rRNAs_out:
         refs=expand("{ref}", ref=config["sortmerna_ref"])
     output:
         other=temp("results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_other.fq"),
-        aligned=temp("results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned.fq"),
-        report="results/preprocess_01/05_sortmernaed_data/{sample}_R1_processed_trimmed_aligned.log"
     log:
         "logs/05_sortmerna/{sample}_sortmernaed.log"
     conda:
@@ -192,7 +190,6 @@ rule sort_rRNAs_out:
         --workdir $working_dir \
         --reads {input.trimmed_fq} --threads {threads} \
         --other results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_other \
-        --aligned results/preprocess_01/05_sortmernaed_data/{wildcards.sample}_R1_processed_trimmed_other \
         --fastx > {log} 2>&1
         
         # Optionally clean up the temporary directories if needed
