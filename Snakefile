@@ -269,6 +269,7 @@ rule umi_deduplication:
         bam="results/preprocess_01/07_star_aligned/{sample}_R1_processed_trimmed_other_Aligned.sortedByCoord.out.bam"
     output:
         dedup_bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam",
+        dedup_bam_index="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam.bai",
         copied_log="results/preprocess_01/08_umi_deduplicated/{sample}_deduplication_log.txt"
     log:
         "logs/08_UMI_deduplication/{sample}_deduplication_log.txt"
@@ -401,7 +402,7 @@ rule calculate_genebodycoverage:
         """
         # Update the access and modification times of the index files
         touch {input.bam_index}
-        
+
         if [ "{config[run_rseqc]}" = "True" ]; then
             geneBody_coverage.py -r {config[bed_file]} -i {input.bam} -o results/preprocess_01/12_GeneBodyCov/{wildcards.sample}
         else
