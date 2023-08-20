@@ -418,11 +418,19 @@ rule mark_genebodycoverage_completed:
         touch {output.completion_marker}
         """
 
+def multiqc_inputs(wildcards):
+    inputs = ["results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix'])]
+    
+    if config["run_rseqc"]:
+        inputs.extend([
+            "results/qc_plots_02/11_TinScore/tin_scores.png",
+            "results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt"
+        ])
+    return inputs
+
 rule multiqc:
     input:
-        "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix']),    
-        "results/qc_plots_02/11_TinScore/tin_scores.png" if config["run_rseqc"] else None,
-        "results/preprocess_01/12_GeneBodyCov/genebodycoverage_completed.txt" if config["run_rseqc"] else None
+        multiqc_inputs
     output:
         html="results/qc_plots_02/{analysis}/multiqc_report.html"
     params:
@@ -434,6 +442,7 @@ rule multiqc:
         """
         multiqc -c {params.configfile} -o {params.outdir} results/preprocess_01/{wildcards.analysis} -p -s -d
         """
+
 
 rule clean_intermediate_files:
     input:
