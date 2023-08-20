@@ -1,23 +1,31 @@
-prefix: "MEP1"
-run_rseqc: True
+prefix: "HSC_Fig3"
+run_rseqc: False
 remove_intermediate_files: False
 samples:
-  - MEP_1
-  - MEP_2
-  - MEP_6
-  - MEP_7
-  - MEP_11
-  - MEP_12
-  - MEP_16
-  - MEP_17
-  - MEP_23  
-  - MEP_24
-  - MEP_28
-  - MEP_29
-  - MEP_33
-  - MEP_34
-  - MEP_38
-  - MEP_39
+  - EE_HSC1
+  - EE_HSC3
+  - EE_HSC4
+  - EE_HSC6
+  - EE_HSC7
+  - EE_HSC8
+  - EE_HSC9
+  - EE_HSC11
+  - EE_HSC12
+  - EE_HSC14
+  - EE_HSC15
+  - EE_HSC16
+  - EE_HSC18
+  - EE_HSC19
+  - EE_HSC20
+  - EE_HSC21
+  - EE_HSC23
+  - EE_HSC24
+  - EE_HSC26
+  - EE_HSC27
+  - EE_HSC28
+  - EE_HSC29
+  - EE_HSC31
+  - EE_HSC32
 directories:
   - results/preprocess_01/01_FastQC_raw_data
   - results/preprocess_01/02_UMI_extraction
@@ -53,14 +61,14 @@ trimming_params:
     length: 30
     stringency: 2
 sortmerna_ref:
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-euk-28s-id98.fasta
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-euk-18s-id95.fasta
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-arc-16s-id95.fasta
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-arc-23s-id98.fasta
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-bac-16s-id90.fasta
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/silva-bac-23s-id98.fasta
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5.8s-database-id98.fasta
-  - /mnt/groupMansuy/kerem/tasks/longrna/genome/rRNA_databases/rfam-5s-database-id98.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/silva-euk-28s-id98.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/silva-euk-18s-id95.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/silva-arc-16s-id95.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/silva-arc-23s-id98.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/silva-bac-16s-id90.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/silva-bac-23s-id98.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/rfam-5.8s-database-id98.fasta
+  - /mnt/groupMansuy/kerem/auxiliary/genome/rRNA_databases/rfam-5s-database-id98.fasta
 fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/auxiliary/conf/fastq_screen.conf"
 star_genome_dir: "/mnt/groupMansuy/kerem/auxiliary/genome/staridx"
 GTF_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GCF_000001635.27_GRCm39_genomic.gtf"
