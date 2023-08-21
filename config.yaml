@@ -1,31 +1,31 @@
-prefix: "HSC_Fig3"
+prefix: "MEP_EE"
 run_rseqc: False
 remove_intermediate_files: False
 samples:
-  - EE_HSC1
-  - EE_HSC3
-  - EE_HSC4
-  - EE_HSC6
-  - EE_HSC7
-  - EE_HSC8
-  - EE_HSC9
-  - EE_HSC11
-  - EE_HSC12
-  - EE_HSC14
-  - EE_HSC15
-  - EE_HSC16
-  - EE_HSC18
-  - EE_HSC19
-  - EE_HSC20
-  - EE_HSC21
-  - EE_HSC23
-  - EE_HSC24
-  - EE_HSC26
-  - EE_HSC27
-  - EE_HSC28
-  - EE_HSC29
-  - EE_HSC31
-  - EE_HSC32
+  - EE_MEP1
+  - EE_MEP2
+  - EE_MEP3
+  - EE_MEP4
+  - EE_MEP5
+  - EE_MEP6
+  - EE_MEP7
+  - EE_MEP8
+  - EE_MEP9
+  - EE_MEP10
+  - EE_MEP11
+  - EE_MEP12
+  - EE_MEP13
+  - EE_MEP14
+  - EE_MEP15
+  - EE_MEP16
+  - EE_MEP17
+  - EE_MEP18
+  - EE_MEP19
+  - EE_MEP20
+  - EE_MEP21
+  - EE_MEP22
+  - EE_MEP23
+  - EE_MEP24
 directories:
   - results/preprocess_01/01_FastQC_raw_data
   - results/preprocess_01/02_UMI_extraction
