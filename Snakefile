@@ -443,7 +443,6 @@ rule multiqc:
         multiqc -c {params.configfile} -o {params.outdir} results/preprocess_01/{wildcards.analysis} -p -s -d
         """
 
-
 rule clean_intermediate_files:
     input:
         # The final files you need; this ensures cleanup happens only after everything is done
