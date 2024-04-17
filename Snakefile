@@ -22,7 +22,8 @@ input_files = [
     "results/preprocess_01/09_02_markdup_afterumidedup/.dir",
     "results/preprocess_01/10_featureCounts/.dir",
     "results/preprocess_01/11_TinScore/.dir",
-    "results/preprocess_01/12_GeneBodyCov/.dir", 
+    "results/preprocess_01/12_GeneBodyCov/.dir",
+    "results/preprocess_01/14_salmon_quant_counts/counts.tsv" 
 ]
 if config["remove_intermediate_files"]:
     input_files.append("intermediate_files_removed.txt")
@@ -35,7 +36,7 @@ if config["run_rseqc"]:
 input_files.extend(
     expand(
         [
-
+        "results/preprocess_01/13_salmon_post_bam/{sample}_quant/quant.sf"
         ],
         sample=config["samples"]
     )
@@ -416,12 +417,12 @@ rule salmon_post_bam:
     input:
         bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
     output:
-        quant="results/preprocess_01/13_salmon_post_bam/{sample}_genome1_quant/quant.sf",
-        tmp_R1=temp("results/tmp/{sample}_genome1_R1.fastq"),
-        tmp_R2=temp("results/tmp/{sample}_genome1_R2.fastq")
+        quant="results/preprocess_01/13_salmon_post_bam/{sample}_quant/quant.sf",
+        tmp_R1=temp("results/tmp/{sample}_R1.fastq"),
+        tmp_R2=temp("results/tmp/{sample}_R2.fastq")
     log:
-        salmon="logs/11_salmon_post_bam/{sample}_genome1_salmon.log",
-        samtools_fastq="logs/11_salmon_post_bam/{sample}_genome1_samtools_fastq.log"
+        salmon="logs/11_salmon_post_bam/{sample}_salmon.log",
+        samtools_fastq="logs/11_salmon_post_bam/{sample}_samtools_fastq.log"
     conda:
         "envs/salmonsort.yaml"
     threads: 3
@@ -441,8 +442,20 @@ rule salmon_post_bam:
         salmon quant -i {config[salmon_index_dir]} -l A \
         -1 {output.tmp_R1} -2 {output.tmp_R2} \
         -p {threads} --validateMappings \
-        --output results/preprocess_01/13_salmon_post_bam/{wildcards.sample}_genome1_quant \
+        --output results/preprocess_01/13_salmon_post_bam/{wildcards.sample}_quant \
         > {log.salmon} 2>&1
+        """
+
+rule create_counts:
+    input:
+        sf_files = expand("results/preprocess_01/13_salmon_post_bam/{sample}_quant/quant.sf", sample=config["samples"])
+    output:
+        counts_file = "results/preprocess_01/14_salmon_quant_counts/counts.tsv"
+    log:
+        "logs/12_salmon_quant/create_counts.log"
+    shell:
+        """
+        python scripts/CreateCounts1.py {input.sf_files} {output.counts_file} > {log} 2>&1
         """
 
 def multiqc_inputs(wildcards):
