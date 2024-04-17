@@ -418,8 +418,7 @@ rule salmon_post_bam:
         bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
     output:
         quant="results/preprocess_01/13_salmon_post_bam/{sample}_quant/quant.sf",
-        tmp_R1=temp("results/tmp/{sample}_R1.fastq"),
-        tmp_R2=temp("results/tmp/{sample}_R2.fastq")
+        tmp_R1=temp("results/tmp/{sample}_R1.fastq")
     log:
         salmon="logs/11_salmon_post_bam/{sample}_salmon.log",
         samtools_fastq="logs/11_salmon_post_bam/{sample}_samtools_fastq.log"
@@ -434,13 +433,15 @@ rule salmon_post_bam:
         # Convert BAM to FASTQ
         samtools fastq \
             -@ {threads} \
+            -0 /dev/null \
+            -s /dev/null \
+            -n \
             -1 {output.tmp_R1} \
-            -2 {output.tmp_R2} -n\
             {input.bam} > {log.samtools_fastq} 2>&1
         
-        # Run Salmon quant
+        # Run Salmon quant for single-end data
         salmon quant -i {config[salmon_index_dir]} -l A \
-        -1 {output.tmp_R1} -2 {output.tmp_R2} \
+        -r {output.tmp_R1} \
         -p {threads} --validateMappings \
         --output results/preprocess_01/13_salmon_post_bam/{wildcards.sample}_quant \
         > {log.salmon} 2>&1
