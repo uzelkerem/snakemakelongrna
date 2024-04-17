@@ -2,22 +2,30 @@ prefix: "MEP1"
 run_rseqc: False
 remove_intermediate_files: False
 samples:
-  - MEP_1
-  - MEP_2
-  - MEP_6
-  - MEP_7
-  - MEP_11
-  - MEP_12
-  - MEP_16
-  - MEP_17
-  - MEP_23  
-  - MEP_24
-  - MEP_28
-  - MEP_29
-  - MEP_33
-  - MEP_34
-  - MEP_38
-  - MEP_39
+  - EE_HSC1
+  - EE_HSC3
+  - EE_HSC4
+  - EE_HSC6
+  - EE_HSC7
+  - EE_HSC8
+  - EE_HSC9
+  - EE_HSC11
+  - EE_HSC12
+  - EE_HSC14
+  - EE_HSC15
+  - EE_HSC16
+  - EE_HSC18
+  - EE_HSC19
+  - EE_HSC20
+  - EE_HSC21
+  - EE_HSC23
+  - EE_HSC24
+  - EE_HSC26
+  - EE_HSC27
+  - EE_HSC28
+  - EE_HSC29
+  - EE_HSC31
+  - EE_HSC32
 directories:
   - results/preprocess_01/01_FastQC_raw_data
   - results/preprocess_01/02_UMI_extraction
