@@ -1,7 +1,7 @@
 configfile: "config.yaml"
 
 # Expand analysis directories for rule all targets
-#analysis_targets = []
+analysis_targets = []
 #for analysis in config["ANALYSIS_DIRS"]:
 #    # Skip if run_rseqc is False and the analysis is 12_GeneBodyCov
 #    if (not config["run_rseqc"] and analysis == "12_GeneBodyCov"):
