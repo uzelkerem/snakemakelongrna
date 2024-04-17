@@ -4,7 +4,6 @@ remove_intermediate_files: False
 samples:
   - EE_HSC1
   - EE_HSC6
-  - EE_HSC9
   - EE_HSC14
   - EE_HSC18
   - EE_HSC21
