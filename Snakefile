@@ -433,12 +433,8 @@ rule salmon_post_bam:
         # Convert BAM to FASTQ
         samtools fastq \
             -@ {threads} \
-            -0 /dev/null \
-            -s /dev/null \
-            -n \
-            -1 {output.tmp_R1} \
-            {input.bam} > {log.samtools_fastq} 2>&1
-        
+            {input.bam} > {output.tmp_R1} 2> {log.samtools_fastq}
+
         # Run Salmon quant for single-end data
         salmon quant -i {config[salmon_index_dir]} -l A \
         -r {output.tmp_R1} \
