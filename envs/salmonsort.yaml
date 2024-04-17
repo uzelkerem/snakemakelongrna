@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - salmon =1.10.2
+  - samtools = 1.17

@@ -73,6 +73,7 @@ fastq_screen_conf: "/mnt/IM/groupMansuy/kerem/auxiliary/conf/fastq_screen.conf"
 star_genome_dir: "/mnt/groupMansuy/kerem/auxiliary/genome/staridx"
 GTF_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GCF_000001635.27_GRCm39_genomic.gtf"
 bed_file: "/mnt/groupMansuy/kerem/auxiliary/genome/GRCm39_genomic.bed12"
+salmon_index_dir: "/mnt/groupMansuy/kerem/auxiliary/genomes/mm10_salmon_index"
 ANALYSIS_DIRS:
   - 01_FastQC_raw_data
   - 03_trimmed_data

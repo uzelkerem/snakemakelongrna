@@ -1,12 +1,12 @@
 configfile: "config.yaml"
 
 # Expand analysis directories for rule all targets
-analysis_targets = []
-for analysis in config["ANALYSIS_DIRS"]:
-    # Skip if run_rseqc is False and the analysis is 12_GeneBodyCov
-    if (not config["run_rseqc"] and analysis == "12_GeneBodyCov"):
-        continue
-    analysis_targets.append(f"results/qc_plots_02/{analysis}/multiqc_report.html")
+#analysis_targets = []
+#for analysis in config["ANALYSIS_DIRS"]:
+#    # Skip if run_rseqc is False and the analysis is 12_GeneBodyCov
+#    if (not config["run_rseqc"] and analysis == "12_GeneBodyCov"):
+#        continue
+#    analysis_targets.append(f"results/qc_plots_02/{analysis}/multiqc_report.html")
 
 input_files = [
     "results/preprocess_01/01_FastQC_raw_data/.dir",
@@ -23,7 +23,6 @@ input_files = [
     "results/preprocess_01/10_featureCounts/.dir",
     "results/preprocess_01/11_TinScore/.dir",
     "results/preprocess_01/12_GeneBodyCov/.dir", 
-    "results/preprocess_01/10_featureCounts/{prefix}_counts_gtfD_s02_sortmerna.txt".format(prefix=config['prefix'])
 ]
 if config["remove_intermediate_files"]:
     input_files.append("intermediate_files_removed.txt")
@@ -36,12 +35,7 @@ if config["run_rseqc"]:
 input_files.extend(
     expand(
         [
-            "results/preprocess_01/04_FastQC_trimmed_data/{sample}_R1_processed_trimmed_fastqc.html",
-            "results/preprocess_01/06_01_FQScreen_trimmed_data/{sample}_R1_processed_trimmed_screen.html",
-            "results/preprocess_01/06_02_FQScreen_sortmernaed_data/{sample}_R1_processed_trimmed_other_screen.html",
-            "results/preprocess_01/09_02_markdup_afterumidedup/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup_marked_duplicates_metrics.txt",
-            "results/preprocess_01/01_FastQC_raw_data/{sample}_R1_fastqc.html",
-            "results/preprocess_01/01_FastQC_raw_data/{sample}_R2_fastqc.zip"
+
         ],
         sample=config["samples"]
     )
@@ -416,6 +410,39 @@ rule mark_genebodycoverage_completed:
     shell:
         """
         touch {output.completion_marker}
+        """
+
+rule salmon_post_bam:
+    input:
+        bam="results/preprocess_01/08_umi_deduplicated/{sample}_R1_processed_trimmed_other_Aligned_sorted_dedup.bam"
+    output:
+        quant="results/preprocess_01/13_salmon_post_bam/{sample}_genome1_quant/quant.sf",
+        tmp_R1=temp("results/tmp/{sample}_genome1_R1.fastq"),
+        tmp_R2=temp("results/tmp/{sample}_genome1_R2.fastq")
+    log:
+        salmon="logs/11_salmon_post_bam/{sample}_genome1_salmon.log",
+        samtools_fastq="logs/11_salmon_post_bam/{sample}_genome1_samtools_fastq.log"
+    conda:
+        "envs/salmonsort.yaml"
+    threads: 3
+    shell:
+        """
+        # Ensure the temporary directory exists
+        mkdir -p results/tmp/
+
+        # Convert BAM to FASTQ
+        samtools fastq \
+            -@ {threads} \
+            -1 {output.tmp_R1} \
+            -2 {output.tmp_R2} -n\
+            {input.bam} > {log.samtools_fastq} 2>&1
+        
+        # Run Salmon quant
+        salmon quant -i {config[salmon_index_dir]} -l A \
+        -1 {output.tmp_R1} -2 {output.tmp_R2} \
+        -p {threads} --validateMappings \
+        --output results/preprocess_01/13_salmon_post_bam/{wildcards.sample}_genome1_quant \
+        > {log.salmon} 2>&1
         """
 
 def multiqc_inputs(wildcards):
